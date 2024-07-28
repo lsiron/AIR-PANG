@@ -1,5 +1,5 @@
 import { RowDataPacket } from 'mysql2';
-import connection from '../config/db.config';
+import connection from '@_config/db.config';
 
 interface Location extends RowDataPacket {
   id: number;

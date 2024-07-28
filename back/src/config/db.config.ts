@@ -1,4 +1,5 @@
 import mysql from 'mysql2';
+import './env.config';
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -6,6 +7,7 @@ const connection = mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME
 });
+
 
 connection.connect(err => {
   if (err) {

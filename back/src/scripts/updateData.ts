@@ -1,8 +1,8 @@
 import axios from 'axios';
 import cron from 'node-cron';
-import connection from '../config/db.config';
+import connection from '@_config/db.config';
 import loadLocations from './loadLocations';
-import { AirQualityItem } from '../types/types'
+import type { AirQualityItem } from '@_types/location';
 
 if (!process.env.LOCATION_API_KEY) {
   throw new Error('LOCATION_API_KEY is not defined');

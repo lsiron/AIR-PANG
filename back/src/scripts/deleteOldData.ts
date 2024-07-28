@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import connection from '../config/db.config';
+import connection from '@_config/db.config';
 
 // 2일 간격으로 오래된 데이터 삭제하는 함수
 export const deleteOldData = () => {

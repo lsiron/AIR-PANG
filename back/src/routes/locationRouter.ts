@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { getLocationDataController, getMonthlyDataController } from '../controllers/locationController';
+import { getLocationDataController, getMonthlyDataController } from '@_controllers/locationController';
 
 const router = Router();
 
-router.get('/:location', getLocationDataController);
-router.get('/:location/:subLocation', getMonthlyDataController);
+router.get('/', getLocationDataController);
+router.get('/detail', getMonthlyDataController);
 
 export default router;
