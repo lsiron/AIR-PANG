@@ -1,5 +1,5 @@
 import './config/env.config'
-import { app } from './app';
+import app from './app';
 
 const port = process.env.PORT
 
