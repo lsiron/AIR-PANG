@@ -1,7 +1,7 @@
 import cors from 'cors';  // CORS 추가 프론트와의 연결을 위함
 import express from 'express';
-import routes from './routes'; // 라우터 가져오기
-import startCronJob from './scripts/updateData'; // Cron job 스크립트 가져오기
+import routes from '@_routes/index'; // 라우터 가져오기
+import startCronJob from '@_scripts/updateData'; // Cron job 스크립트 가져오기
 
 const app = express();
 

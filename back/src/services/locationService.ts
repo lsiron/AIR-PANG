@@ -1,7 +1,7 @@
-// locationSerives.ts
-import connection from '../config/db.config';
-import { AnnualData, RealtimeData, MonthlyData } from '../types/types';
+import connection from '@_config/db.config';
+import type { AnnualData, RealtimeData, MonthlyData } from '@_types/location';
 import { RowDataPacket } from 'mysql2';
+import { getMaxAQI } from '@_utils/aqi';
 
 // 지역 별 연평균 대기오염 물질 데이터 가져오는 함수
 export const getAnnualData = async (location: string): Promise<AnnualData[]> => {
@@ -71,22 +71,6 @@ export const getRealtimeData = async (location: string): Promise<RealtimeData[]>
   }
 };
 
-// AQI 계산 함수
-const calculateAQI = (concentration: number, lowerBound: number, upperBound: number, aqiLower: number, aqiUpper: number): number => {
-  return ((concentration - lowerBound) / (upperBound - lowerBound)) * (aqiUpper - aqiLower) + aqiLower;
-};
-
-export const getMaxAQI = (data: RealtimeData | AnnualData): number => {
-  const aqiValues = [
-    calculateAQI(data.pm10, 31, 80, 51, 100),
-    calculateAQI(data.pm25, 16, 35, 51, 100),
-    calculateAQI(data.o3, 0.031, 0.09, 51, 100),
-    calculateAQI(data.no2, 0.031, 0.06, 51, 100),
-    calculateAQI(data.co, 2.01, 9, 51, 100),
-    calculateAQI(data.so2, 0.021, 0.05, 51, 100)
-  ];
-  return Math.max(...aqiValues);
-};
 
 // 지역별 월평균 대기오염 물질 데이터 가져오는 함수
 export const getMonthlyData = async (location: string, subLocation: string): Promise<MonthlyData> => {

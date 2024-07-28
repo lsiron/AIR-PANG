@@ -1,4 +1,5 @@
-import './config/env.config'
+import 'tsconfig-paths/register'
+import '@_config/env.config'
 import app from './app';
 
 const port = process.env.PORT
