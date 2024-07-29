@@ -1,5 +1,15 @@
 {
   "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node", "express-session"],
     "baseUrl": "./src",
     "paths": {
       "@_config/*": ["config/*"],
@@ -9,16 +19,14 @@
       "@_scripts/*": ["scripts/*"],
       "@_services/*": ["services/*"],
       "@_types/*": ["types/*"],
-      "@_utils/*": ["utils/*"]
-    },
-    "target": "es6",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+      "@_utils/*": ["utils/*"],
+      "@controllers/*": ["controllers/*"],
+      "@routes/*": ["routes/*"],
+      "@services/*": ["services/*"],
+      "@models/*": ["models/*"],
+      "@utils/*": ["utils/*"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/**/*.d.ts"],
   "exclude": ["node_modules"]
 }
