@@ -1,1 +1,11 @@
 /* 스타일 파일 (CSS, SASS, SCSS 등) */
+/* App.css */
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .App {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
