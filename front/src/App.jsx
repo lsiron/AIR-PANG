@@ -1,6 +1,6 @@
 import React from "react";
 import MapChart from "./components/MapChart";
-import MapButton from "./components/MapButton";
+// import MapButton from "./components/MapButton";
 
 function App() {
   return (

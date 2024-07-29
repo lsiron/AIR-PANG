@@ -3,6 +3,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import highchartsMap from 'highcharts/modules/map';
 import proj4 from 'proj4';
+import MapModal from './MapModal';
 
 // 라이브러리 추가: npm install highcharts highcharts-react-official @types/highcharts proj4
 
@@ -30,11 +31,23 @@ const MapChart = () => {
     }
   });
 
+  // const handleRegionClick = (e) => {
+  //   const regionName = e.point.name;
+  //   const newWindow = window.open('', '_blank'); //새 창 속성
+  //   newWindow.document.write(`<h2>${regionName}</h2>`); //새 창에서 보여질 내용
+  //   newWindow.document.title = `${regionName}`; //새 창의 타이틀 
+  // };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState('');
+
   const handleRegionClick = (e) => {
     const regionName = e.point.name;
-    const newWindow = window.open('', '_blank'); //새 창 속성
-    newWindow.document.write(`<h2>${regionName}</h2>`); //새 창에서 보여질 내용
-    newWindow.document.title = `${regionName}`; //새 창의 타이틀 
+    setSelectedRegion(regionName);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -79,7 +92,7 @@ const MapChart = () => {
           //이곳에 박스안의 내용 표시
           series: [{ 
             data: data,
-            name: '지역명',
+            name: '지역별 기후',
             states: {
               hover: {
                 color: '#BADA55'
@@ -111,6 +124,10 @@ const MapChart = () => {
         options={mapOptions}
         constructorType={'mapChart'}
       />
+      <MapModal isOpen={isModalOpen} onClose={closeModal}>
+        <h2>{selectedRegion}</h2>
+        <p>지역별 추가 정보 표시</p>
+      </MapModal>
     </div>
   );
 };
