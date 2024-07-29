@@ -30,6 +30,13 @@ const MapChart = () => {
     }
   });
 
+  const handleRegionClick = (e) => {
+    const regionName = e.point.name;
+    const newWindow = window.open('', '_blank'); //새 창 속성
+    newWindow.document.write(`<h2>${regionName}</h2>`); //새 창에서 보여질 내용
+    newWindow.document.title = `${regionName}`; //새 창의 타이틀 
+  };
+
   useEffect(() => {
     const fetchTopology = async () => {
       try {
@@ -42,7 +49,13 @@ const MapChart = () => {
           ['kr-tj', 18], ['kr-ul', 19], ['kr-in', 20], ['kr-kw', 21],
           ['kr-gn', 22], ['kr-cj', 23], ['kr-gb', 24], ['kr-so', 25],
           ['kr-tg', 26], ['kr-kj', 27]
-        ]; //데이터를 수정하여 보여지는 내용 변경
+        ]; 
+        //데이터를 수정하여 보여지는 내용 변경 ['id', 값]
+        // ['kr-4194', ], ['kr-kg', ], ['kr-cb', ], ['kr-kn', ],
+        // ['kr-2685', ], ['kr-pu', ], ['kr-2688', ], ['kr-sj', ],
+        // ['kr-tj', ], ['kr-ul', ], ['kr-in', ], ['kr-kw', ],
+        // ['kr-gn', ], ['kr-cj', ], ['kr-gb', ], ['kr-so', ],
+        // ['kr-tg', ], ['kr-kj', ]
 
         setMapOptions({
           chart: {
@@ -58,10 +71,13 @@ const MapChart = () => {
               verticalAlign: 'bottom'
             }
           },
-          colorAxis: {
-            min: 0
-          },
-          series: [{ //이곳에 박스안의 내용 표시
+          // 차트 아래 수치별 색상표 
+          // colorAxis: {
+          //   min: 0
+          // },
+          
+          //이곳에 박스안의 내용 표시
+          series: [{ 
             data: data,
             name: '지역명',
             states: {
@@ -72,6 +88,11 @@ const MapChart = () => {
             dataLabels: {
               enabled: true,
               format: '{point.name}'
+            },
+            point: {
+              events: {
+                click: handleRegionClick
+              }
             }
           }]
         });

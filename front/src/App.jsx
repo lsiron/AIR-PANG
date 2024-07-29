@@ -17,7 +17,7 @@ function App() {
         alignItems: 'center'
       }}>
         <MapChart />
-        <MapButton />
+        {/* <MapButton /> */}
       </div>
     </div>
   );
