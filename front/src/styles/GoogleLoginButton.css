@@ -1,11 +1,17 @@
 .google-login-button {
-  background: none;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
   cursor: pointer;
-  padding: 0;
+  text-decoration: none;
 }
 
 .google-logo {
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
 }
