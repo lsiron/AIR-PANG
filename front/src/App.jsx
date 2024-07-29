@@ -1,5 +1,6 @@
 import React from "react";
 import MapChart from "./components/MapChart";
+import MapButton from "./components/MapButton";
 
 function App() {
   return (
@@ -10,7 +11,14 @@ function App() {
       }}>
         지역별 날씨
       </h1>
-      <MapChart />
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <MapChart />
+        <MapButton />
+      </div>
     </div>
   );
 }
