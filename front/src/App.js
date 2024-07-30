@@ -1,9 +1,11 @@
-function App() {
+import "./styles/App.css";
+
+import Overview from "./Overview";
+
+export default function App() {
   return (
-    <div>
-      <h1>Welcome back!</h1>
+    <div className="App">
+      <Overview defaultCity="Seoul" />
     </div>
   );
 }
-
-export default App;
