@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { googleCallback, refreshAccessToken } from '@controllers/authController'; // 절대 경로로 변경
+import { googleCallback, refreshAccessToken } from '@_controllers/authController'; // 절대 경로로 변경
 
 const router = Router();
 

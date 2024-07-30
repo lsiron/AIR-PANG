@@ -6,15 +6,13 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true // 쿠키를 포함하여 요청을 보내기 위해 설정
 });
 
-// 요청 인터셉터 설정
+// 요청 인터셉터 설정 (쿠키는 자동으로 전송되므로 설정 불필요)
 axiosInstance.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // 쿠키는 자동으로 포함되므로 추가 작업 불필요
     return config;
   },
   error => {
