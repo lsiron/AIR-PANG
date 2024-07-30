@@ -1,16 +1,8 @@
-import axiosInstance from './api';
+import axiosInstance from './axiosInstance';
 
-const API_URL = '/api/auth'; 
-
-const loginWithGoogle = async (tokenId) => {
-  try {
-    const response = await axiosInstance.post(`${API_URL}/google`, {
-      token: tokenId,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+const loginWithGoogle = async (token) => {
+  const response = await axiosInstance.post('/api/auth/google', { token });
+  return response.data;
 };
 
 export default {
