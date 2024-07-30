@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import GoogleLoginButton from './components/GoogleLoginButton';
 import './styles/App.css';
 
@@ -12,18 +12,6 @@ import ChallengeDetail from './components/ChallengeDetail';
 import ChallengeEdit from './components/ChallengeEdit';
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      // 로그인된 상태로 간주
-      // 서버에서 사용자 정보를 가져올 수 있습니다.
-      // 예를 들어:
-      // axiosInstance.get('/user').then(response => setUser(response.data));
-    }
-  }, []);
-
   return (
     <Router>
       <div className="App">
@@ -33,7 +21,7 @@ function App() {
           <Link to="/challenges">친환경 챌린지</Link>
         </nav>
         <h1>오늘의 공기 괜찮을까요?</h1>
-      {!user ? <GoogleLoginButton /> : <p>Welcome, {user.name}!</p>}
+        <GoogleLoginButton />
         <Routes>
           <Route path="/locations" element={<Locations />} />
           <Route path="/location" element={<LocationPage />} />
@@ -49,3 +37,4 @@ function App() {
 }
 
 export default App;
+
