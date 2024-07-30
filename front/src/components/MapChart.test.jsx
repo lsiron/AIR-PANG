@@ -4,6 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import highchartsMap from 'highcharts/modules/map';
 import proj4 from 'proj4';
 import MapModal from './MapModal';
+// import axios from 'axios';  // axios 라이브러리 사용
 
 // 라이브러리 추가: npm install highcharts highcharts-react-official @types/highcharts proj4
 
@@ -46,9 +47,34 @@ const MapChart = () => {
     setIsModalOpen(true);
   };
 
+  // const handleRegionClick = async (e) => {
+  //   const regionName = e.point.name;
+  //   setSelectedRegion(regionName);
+    
+  //   try {
+  //     const { data } = await axios.get(`http://your-backend-url/api/region-detail/${regionName}`);
+  //     setRegionData(prevData => ({...prevData, [regionName]: data}));
+  //   } catch (error) {
+  //     console.error("Error fetching region detail:", error);
+  //   }
+  
+  //   setIsModalOpen(true);
+  // };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // 토폴로지 데이터 가져오기
+  //       const topology = await import('../json/kr-all.topo.json');
+  
+  //       // 서버에서 지역 데이터 가져오기
+  //       const { data } = await axios.get('http://your-backend-url/api/region-data'); // 백엔드 주소, 데이터 경로
+  
+  //       setRegionData(data);
 
   useEffect(() => {
     const fetchTopology = async () => {
