@@ -10,7 +10,7 @@ if (!process.env.LOCATION_API_KEY) {
 
 const API_KEY = encodeURIComponent(process.env.LOCATION_API_KEY)
 
-const fetchAndStoreData = async () => {
+const fetchAndStoreData = async (): Promise<void> => {
   const connectionPromise = connection.promise();
 
   try {
@@ -18,14 +18,14 @@ const fetchAndStoreData = async () => {
     const provinces = Array.from(new Set(locations.map(loc => loc.address_a_name))); 
 
     for (const province of provinces) {
-      console.log(`Fetching data for: ${province}`); // 도/광역시/자치시/자치도 이름 출력
+      console.log(`${province} 실시간 데이터를 가져오는 중 입니다.`); // 도/광역시/자치시/자치도 이름 출력
       const url = `http://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureSidoLIst?sidoName=${encodeURIComponent(province)}&searchCondition=DAILY&pageNo=1&numOfRows=100&returnType=json&serviceKey=${API_KEY}`;
 
       try {
         const response = await axios.get(url);
 
         if (!response.data || !response.data.response || !response.data.response.body || !response.data.response.body.items) {
-          console.error(`Unexpected response structure for ${province}:`, response.data);
+          console.error(`${province} 실시간 데이터를 가져오는 데 실패 했습니다.:`, response.data);
           continue; // 다음 시/도로 넘어감
         }
 
@@ -81,19 +81,19 @@ const fetchAndStoreData = async () => {
 
         // 트랜잭션 커밋(성공하면 db에 저장)
         await connectionPromise.commit();
-        console.log(`Data for ${province} updated successfully.`);
+        console.log(`${province} 실시간 업데이트를 성공 했습니다.`);
       } catch (error) {
         // 트랜잭션 롤백(에러나면 이전 작업 취소)
         await connectionPromise.rollback();
-        console.error(`Error fetching data for ${province}:`, error);
+        console.error(`${province} 실시간 업데이트를 실패 했습니다.:`, error);
       }
 
       // 각 API 호출 간에 1초 대기
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-    console.log('Data fetched and stored successfully for all cities.'); // 전체 데이터가 성공적으로 가져와지고 저장되었을 때 메시지 출력
+    console.log('모든 지역 데이터를 불러왔습니다.'); // 전체 데이터가 성공적으로 가져와지고 저장되었을 때 메시지 출력
   } catch (error) {
-    console.error('Error fetching locations:', error);
+    console.error('모든 지역 데이터를 불러오는데 실패 했습니다.:', error);
   } finally {
     await connectionPromise.end();
   }
