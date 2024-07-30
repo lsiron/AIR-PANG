@@ -9,7 +9,7 @@ export const createTaskController = async (req: Request, res: Response) => {
     res.status(201).json(newTask);
   } catch (error) {
     console.error('할 일 데이터를 가져오는데 실패 했습니다.:', error);
-    res.status(500).send('Internal server error');
+    res.status(500).send('서버 오류발생');
   }
 };
 
@@ -22,7 +22,7 @@ export const updateTaskController = async (req: Request, res: Response) => {
     res.status(204).json(updatedTask);
   } catch (error) {
     console.error(`${id} 아이디의 할 일을 수정을 실패 했습니다.:`, error);
-    res.status(500).send('Internal server error');
+    res.status(500).send('서버 오류발생');
   }
 };
 
@@ -34,6 +34,6 @@ export const deleteTaskController = async (req: Request, res: Response) => {
     res.status(204).send();
   } catch (error) {
     console.error(`${id} 아이디의 할 일 삭제를 실패 했습니다.:`, error);
-    res.status(500).send('Internal server error');
+    res.status(500).send('서버 오류발생');
   }
 };
