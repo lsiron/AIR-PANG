@@ -1,8 +1,26 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import React from "react";
+import MapChart from "./components/MapChart";
+// import MapButton from "./components/MapButton";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+function App() {
+  return (
+    <div className="App">
+      <h1 style={{ 
+        textAlign: 'center', 
+        marginBottom: '20px'
+      }}>
+        지역별 날씨
+      </h1>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <MapChart />
+        {/* <MapButton /> */}
+      </div>
+    </div>
+  );
+}
+
+export default App;

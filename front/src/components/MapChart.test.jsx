@@ -12,7 +12,7 @@ if (typeof window !== 'undefined') {
   highchartsMap(Highcharts);
 }
 
-// proj4 설정 (좌표계를 활용한 맵 프로젝션에 필요)
+// proj4 설정 (맵 프로젝션에 필요)
 if (typeof window !== 'undefined') {
   window.proj4 = proj4;
 }
@@ -31,6 +31,12 @@ const MapChart = () => {
     }
   });
 
+  // const handleRegionClick = (e) => {
+  //   const regionName = e.point.name;
+  //   const newWindow = window.open('', '_blank'); //새 창 속성
+  //   newWindow.document.write(`<h2>${regionName}</h2>`); //새 창에서 보여질 내용
+  //   newWindow.document.title = `${regionName}`; //새 창의 타이틀 
+  // };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('');
 
@@ -57,6 +63,12 @@ const MapChart = () => {
           ['kr-gn', 22], ['kr-cj', 23], ['kr-gb', 24], ['kr-so', 25],
           ['kr-tg', 26], ['kr-kj', 27]
         ]; 
+        //데이터를 수정하여 보여지는 내용 변경 ['id', 값]
+        // ['kr-4194', ], ['kr-kg', ], ['kr-cb', ], ['kr-kn', ],
+        // ['kr-2685', ], ['kr-pu', ], ['kr-2688', ], ['kr-sj', ],
+        // ['kr-tj', ], ['kr-ul', ], ['kr-in', ], ['kr-kw', ],
+        // ['kr-gn', ], ['kr-cj', ], ['kr-gb', ], ['kr-so', ],
+        // ['kr-tg', ], ['kr-kj', ]
 
         setMapOptions({
           chart: {
@@ -72,6 +84,10 @@ const MapChart = () => {
               verticalAlign: 'bottom'
             }
           },
+          // 차트 아래 수치별 색상표 
+          // colorAxis: {
+          //   min: 0
+          // },
           
           //이곳에 박스안의 내용 표시
           series: [{ 

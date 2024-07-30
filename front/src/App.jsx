@@ -1,6 +1,6 @@
 import React from "react";
 import MapChart from "./components/MapChart";
-// import MapButton from "./components/MapButton";
+
 
 function App() {
   return (
@@ -17,7 +17,6 @@ function App() {
         alignItems: 'center'
       }}>
         <MapChart />
-        {/* <MapButton /> */}
       </div>
     </div>
   );
