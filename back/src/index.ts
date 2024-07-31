@@ -1,8 +1,8 @@
-import './config/env.config'
-import { app } from './app';
+import app from './app';
 
-const port = process.env.PORT
+const port = process.env.PORT || 8080; // 기본값 설정
 
+// 서버 시작
 app.listen(port, () => {
-  console.log(`서버가 실행되었습니다!`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
