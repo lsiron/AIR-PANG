@@ -1,32 +1,36 @@
 import express from 'express';
-import cors from 'cors';  // CORS 추가 프론트와의 연결을 위함
-import session from 'express-session';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import routes from '@_routes/index'; // 라우터 가져오기
-import startCronJob from '@_scripts/updateData'; // Cron job 스크립트 가져오기
-import 'tsconfig-paths/register';
-import '@_config/env.config';
+import { authenticateJWT } from '@_middlewares/authMiddleware'; // JWT 인증 미들웨어 가져오기
+import routes from '@_routes/index'; // 라우트 가져오기
+import startCronJob from '@_scripts/updateData'; // Cron job 가져오기
 import dotenv from 'dotenv';
 
-// 환경 변수 로드
+// 환경 변수 설정
 dotenv.config();
 
 const app = express();
 
-// 미들웨어 설정
-app.use(cors());
-app.use(express.json());
-app.use(cookieParser());
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'default_secret',
-  resave: false,
-  saveUninitialized: true,
+// CORS 설정
+app.use(cors({
+  origin: process.env.CLIENT_URL, 
+  credentials: true // 쿠키 허용
 }));
 
-// 라우트 설정
-app.use(routes);
+// JSON 바디 파서와 쿠키 파서 설정
+app.use(express.json());
+app.use(cookieParser());
 
-// 서버 시작 시 데이터 업데이트 및 크론 작업 시작
+// JWT 인증 미들웨어를 원하는 라우트에 적용
+app.use('/api', authenticateJWT, routes); // 모든 /api 경로에 JWT 인증 미들웨어 적용
+
+// 서버 시작 시 데이터 업데이트 및 크론 작업
 startCronJob();
+
+// 에러 핸들러 미들웨어 (필요에 따라 추가)
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 export default app;
