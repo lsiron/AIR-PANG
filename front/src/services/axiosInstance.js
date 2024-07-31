@@ -9,23 +9,16 @@ const axiosInstance = axios.create({
   withCredentials: true // 쿠키를 포함하여 요청을 보내기 위해 설정
 });
 
-// 요청 인터셉터 설정 (쿠키는 자동으로 전송되므로 설정 불필요)
+// 요청 인터셉터 설정 (특별한 처리가 필요 없으면 제거 가능)
 axiosInstance.interceptors.request.use(
-  config => {
-    // 쿠키는 자동으로 포함되므로 추가 작업 불필요
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  }
+  config => config,
+  error => Promise.reject(error)
 );
 
 // 응답 인터셉터 설정
 axiosInstance.interceptors.response.use(
   response => response,
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
 export default axiosInstance;
