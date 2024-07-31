@@ -1,6 +1,6 @@
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
-import connection from '../config/db.config';
-import { User } from '../types/user';
+import connection from '@_config/db.config';
+import { User } from '@_types/user';
 
 export class UserService {
   // 사용자 생성 또는 조회 메서드

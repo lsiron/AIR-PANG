@@ -1,9 +1,7 @@
-// src/middlewares/authMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { config } from '../config/env.config';
-import { UserService } from '../services/authService';
-import { User } from '../types/user';
+import { config } from '@_config/env.config';
+import { UserService } from '@_services/authService';
 
 const userService = new UserService();
 const jwtSecret = config.JWT_SECRET;
@@ -21,7 +19,7 @@ const verifyToken = (token: string, secret: string): Promise<JwtPayload> => {
       if (decoded && typeof decoded === 'object' && 'id' in decoded) {
         resolve(decoded as JwtPayload);
       } else {
-        reject(new Error('Invalid token'));
+        reject(new Error('잘못된 토큰입니다.'));
       }
     });
   });
@@ -38,23 +36,23 @@ export const authenticateJWT = async (req: Request, res: Response, next: NextFun
         try {
           const user = await userService.findUserById(decoded.id);
           if (user) {
-            req.user = user; // 사용자 정보를 req.user에 설정
-            next(); // 요청을 다음 미들웨어로 전달
+            req.user = user; 
+            next();
           } else {
-            res.sendStatus(403);
+            res.sendStatus(403); 
           }
         } catch (error) {
-          console.error('User Retrieval Error:', error);
+          console.error('사용자 검색 에러', error);
           res.sendStatus(403);
         }
       } else {
         res.sendStatus(403);
       }
     } catch (err) {
-      console.error('JWT Verification Error:', err);
-      res.sendStatus(403);
+      console.error('JWT 검증 오류:', err);
+      res.sendStatus(403); 
     }
   } else {
-    res.sendStatus(401);
+    res.sendStatus(401); 
   }
 };

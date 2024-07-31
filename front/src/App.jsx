@@ -10,6 +10,7 @@ import ChallengeList from './components/ChallengeList';
 import ChallengeCreate from './components/ChallengeCreate';
 import ChallengeDetail from './components/ChallengeDetail';
 import ChallengeEdit from './components/ChallengeEdit';
+import GoogleCallback from './components/googlecallback'; 
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/challenges/create" element={<ChallengeCreate />} />
           <Route path="/challenges/:id" element={<ChallengeDetail />} />
           <Route path="/challenges/edit/:id" element={<ChallengeEdit />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} /> 
         </Routes>
       </div>
     </Router>
@@ -37,4 +39,3 @@ function App() {
 }
 
 export default App;
-
