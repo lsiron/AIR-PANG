@@ -16,9 +16,9 @@ export const getAnnualData = async (location: string): Promise<AnnualData[]> => 
       a.so2_avg AS so2,
       l.address_b_name
     FROM 
-      Air_Quality a
+      air_quality a
     JOIN 
-      Locations l
+      locations l
     ON 
       a.location_id = l.id
     WHERE 
@@ -49,9 +49,9 @@ export const getRealtimeData = async (location: string): Promise<RealtimeData[]>
       r.so2,
       l.address_b_name
     FROM 
-      Realtime_Air_Quality r
+      realtime_air_quality r
     JOIN 
-      Locations l
+      locations l
     ON 
       r.location_id = l.id
     WHERE 
@@ -89,9 +89,9 @@ export const getMonthlyData = async (location: string, subLocation: string): Pro
       m.month,
       m.aqi
     FROM 
-      Locations l
+      locations l
     LEFT JOIN 
-      Realtime_Air_Quality r ON l.id = r.location_id
+      realtime_air_quality r ON l.id = r.location_id
     LEFT JOIN 
       monthly_aqi m ON l.id = m.location_id
     WHERE 
