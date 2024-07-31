@@ -55,7 +55,7 @@ const fetchAndStoreData = async (): Promise<void> => {
           const dataTime = item.dataTime || new Date().toISOString();
 
           const query = `
-            INSERT INTO Realtime_Air_Quality (location_id, pm10, pm25, o3, no2, co, so2, timestamp)
+            INSERT INTO realtime_air_quality (location_id, pm10, pm25, o3, no2, co, so2, timestamp)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
               pm10 = VALUES(pm10),
