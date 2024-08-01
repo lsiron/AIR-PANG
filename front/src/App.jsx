@@ -24,8 +24,8 @@ function App() {
         <GoogleLoginButton />
         <Routes>
           <Route path="/locations" element={<Locations />} />
-          <Route path="/location" element={<LocationPage />} />
-          <Route path="/location/detail" element={<LocationDetail />} />
+          <Route path="/locations/sub" element={<LocationPage />} />
+          <Route path="/locations/detail" element={<LocationDetail />} />
           <Route path="/challenges" element={<ChallengeList />} />
           <Route path="/challenges/create" element={<ChallengeCreate />} />
           <Route path="/challenges/:id" element={<ChallengeDetail />} />
@@ -37,4 +37,3 @@ function App() {
 }
 
 export default App;
-
