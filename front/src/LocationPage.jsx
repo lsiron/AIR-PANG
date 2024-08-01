@@ -1,5 +1,8 @@
+// ./front/src/LocationPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { getGrade, calculateScore } from './utils/aqi';
 
 function LocationPage() {
   const { search } = useLocation();
@@ -10,14 +13,16 @@ function LocationPage() {
 
   useEffect(() => {
     if (location) {
-      fetch(`http://localhost:8080/locations?location=${location}`)
+      fetch(`http://localhost:8080/locations/sub?location=${location}`)
         .then(response => response.json())
         .then(data => setData(data))
         .catch(error => console.error('Error fetching data:', error));
     }
   }, [location]);
 
-  const handleMouseEnter = (location, grade, score, event) => {
+  const handleMouseEnter = (location, annualMaxAQI, realtimeMaxAQI, event) => {
+    const grade = getGrade(realtimeMaxAQI);
+    const score = calculateScore(annualMaxAQI, realtimeMaxAQI);
     setTooltip({
       show: true,
       location,
@@ -42,9 +47,9 @@ function LocationPage() {
       {data ? (
         <div>
           {data.map((d, index) => (
-            <Link key={index} to={`/location/detail?location=${location}&subLocation=${d.location}`}>
+            <Link key={index} to={`/locations/detail?location=${location}&subLocation=${d.location}`}>
               <button
-                onMouseEnter={(e) => handleMouseEnter(d.location, d.grade, d.score, e)}
+                onMouseEnter={(e) => handleMouseEnter(d.location, d.annualMaxAQI, d.realtimeMaxAQI, e)}
                 onMouseLeave={handleMouseLeave}
               >
                 {d.location}
