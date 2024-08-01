@@ -7,42 +7,41 @@ import { User } from '@_types/user';
 
 const userService = new UserService();
 
-// Google 인증 시작
-export const googleAuth = passport.authenticate('google', { scope: ['profile', 'email'] });
+export const googleAuth = passport.authenticate('google', { scope: ['profile'] }); 
 
-// Google 인증 콜백
 export const googleAuthCallback = (req: Request, res: Response) => {
+ 
   passport.authenticate('google', { session: false }, async (err, user, info) => {
+    console.log(user);
     if (err) {
-      console.error('Authentication error:', err);
-      return res.status(500).json({ message: 'Internal server error' });
+      console.error('인증 오류:', err);
+      return res.status(500).json({ message: '내부 서버 오류' });
     }
 
     if (!user) {
-      console.error('User not authenticated');
-      return res.status(401).json({ message: 'Authentication failed' });
+      console.error('사용자가 인증되지 않음');
+      return res.status(401).json({ message: '인증 실패' });
     }
 
-    console.log('User authenticated:', user);
+    console.log('사용자 인증:', user);
     const userObj = user as User; 
     try {
-      // JWT 생성
+      
       const token = jwt.sign({ id: userObj.id }, config.JWT_SECRET, { expiresIn: '1h' });
       console.log('JWT created:', token);
 
-      // JWT를 쿠키에 저장
-      res.cookie('jwt', token, { httpOnly: true, secure: true, sameSite: 'strict' });
+      
+      res.cookie('jwt', token, { httpOnly: true, secure: false});
       console.log('JWT cookie set');
 
-      res.redirect('/'); // 성공 시 리디렉션할 URL
+      res.redirect('/'); 
     } catch (tokenError) {
       console.error('Error creating JWT:', tokenError);
-      res.status(500).json({ message: 'Token creation failed' });
+      res.status(500).json({ message: '토큰 생성 실패' });
     }
   })(req, res);
 };
 
-// 로그아웃
 export const logout = (req: Request, res: Response) => {
   res.clearCookie('jwt');
   req.logout((err) => {
