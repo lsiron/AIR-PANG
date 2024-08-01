@@ -1,35 +1,52 @@
-import { OAuth2Client, Credentials } from 'google-auth-library';
-import { config } from '@_config/env.config';
+import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import connection from '../config/db.config';
+import { User } from '../types/user';
 
-const SCOPES = ['https://www.googleapis.com/auth/userinfo.profile'];
+export class UserService {
+  // 사용자 생성 또는 조회 메서드
+  async findOrCreateUser(googleUser: any): Promise<User> {
+    const [rows] = await connection.promise().query<RowDataPacket[]>(
+      'SELECT * FROM users WHERE googleId = ?',
+      [googleUser.id]
+    );
 
-const oAuth2Client = new OAuth2Client(config.CLIENT_ID, config.CLIENT_SECRET, config.REDIRECT_URI);
+    if (rows.length > 0) {
+      return rows[0] as User;
+    } else {
+      const [result] = await connection.promise().query<ResultSetHeader>(
+        'INSERT INTO users (googleId, name, email) VALUES (?, ?, ?)',
+        [googleUser.id, googleUser.displayName, googleUser.emails[0].value]
+      );
 
-export const getAuthUrl = (): string => {
-  return oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-    prompt: 'consent',
-  });
-};
-
-export const handleOAuthCallback = async (code: string): Promise<Credentials> => {
-  const { tokens } = await oAuth2Client.getToken(code);
-  oAuth2Client.setCredentials(tokens);
-  
-  if (tokens.refresh_token) {
-    console.log(`Refresh Token: ${tokens.refresh_token}`);
-    // 데이터베이스에 저장하는 로직 추가
+      const insertId = result.insertId;
+      return {
+        id: insertId,
+        googleId: googleUser.id,
+        name: googleUser.displayName,
+        email: googleUser.emails[0].value,
+      } as User;
+    }
   }
-  console.log(`Access Token: ${tokens.access_token}`);
-  return tokens;
-};
 
-export const getTokenInfo = async (accessToken: string) => {
-  try {
-    const tokenInfo = await oAuth2Client.getTokenInfo(accessToken);
-    return tokenInfo;
-  } catch (error) {
-    throw new Error('Invalid token');
+  // 사용자 ID로 사용자 조회 메서드
+  async findUserById(id: number): Promise<User | null> {
+    const [rows] = await connection.promise().query<RowDataPacket[]>(
+      'SELECT * FROM users WHERE id = ? AND deleted_at IS NULL',
+      [id]
+    );
+
+    if (rows.length > 0) {
+      return rows[0] as User;
+    } else {
+      return null;
+    }
   }
-};
+
+  // 사용자 삭제 메서드
+  async deleteUser(userId: number): Promise<void> {
+    await connection.promise().query(
+      'UPDATE users SET deleted_at = NOW() WHERE id = ?',
+      [userId]
+    );
+  }
+}

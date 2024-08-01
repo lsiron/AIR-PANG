@@ -76,7 +76,14 @@ function ChallengeList() {
     fetchChallenges(); // 페이지 로드 시 모든 챌린지 불러오기
   }, []);
 
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchChallenges(search); // 검색어에 맞는 챌린지 리스트 불러오기
+  };
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -94,6 +101,15 @@ function ChallengeList() {
   return (
     <div className="ChallengeList">
       <h1>챌린지</h1>
+      <form onSubmit={handleSearchSubmit}>
+        <input
+          type="text"
+          placeholder="챌린지 검색"
+          value={search}
+          onChange={handleSearchChange}
+        />
+        <button type="submit">검색하기</button>
+      </form>
       <button>
         <Link to="/challenges/create">챌린지 만들기</Link>
       </button>
