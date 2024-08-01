@@ -9,12 +9,14 @@ export interface Task {
 
 export interface Challenge {
   id: number;
+  user_id: number;
   title: string;
   description: string;
   start_date: string;
   end_date: string;
   goal: number;
   progress: number;
+  user_name?: string;
 }
 
 export interface CreateChallengeInput {
@@ -35,12 +37,14 @@ export interface UpdateChallengeInput {
 // 헬퍼 함수: RowDataPacket을 Challenge 타입으로 변환
 export const mapRowToChallenge = (row: RowDataPacket): Challenge => ({
   id: row.id,
+  user_id: row.user_id,
   title: row.title,
   description: row.description,
   start_date: row.start_date,
   end_date: row.end_date,
   goal: row.goal,
   progress: row.progress,
+  user_name: row.user_name,
 });
 
 // 헬퍼 함수: RowDataPacket을 Task 타입으로 변환
