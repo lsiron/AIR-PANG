@@ -1,37 +1,34 @@
-import React from 'react';
-import './styles/App.css';
-
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import LocationPage from './LocationPage';
-import Locations from './Locations';
-import LocationDetail from './LocationDetail';
-import ChallengeList from './components/ChallengeList';
-import ChallengeCreate from './components/ChallengeCreate';
-import ChallengeDetail from './components/ChallengeDetail';
-import ChallengeEdit from './components/ChallengeEdit';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
+import MainPage from './pages/MainPage';
+import Locations from './pages/FindNeighborhood';
+import Challenges from './pages/Challenges';
+import MyPage from './pages/MyPage';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // 강제 로그인. 끝나면 false로 바꾸기
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
   return (
     <Router>
-      <div className="App">
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/locations">우리동네 찾기</Link>
-          <Link to="/challenges">친환경 챌린지</Link>
-        </nav>
+      <Layout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
         <Routes>
+          <Route path="/" element={<MainPage />} />
           <Route path="/locations" element={<Locations />} />
-          <Route path="/location" element={<LocationPage />} />
-          <Route path="/location/detail" element={<LocationDetail />} />
-          <Route path="/challenges" element={<ChallengeList />} />
-          <Route path="/challenges/create" element={<ChallengeCreate />} />
-          <Route path="/challenges/:id" element={<ChallengeDetail />} />
-          <Route path="/challenges/edit/:id" element={<ChallengeEdit />} />
+          {/* {isLoggedIn && ( */}
+            <>
+              <Route path="/challenges/*" element={<Challenges />} />
+              <Route path="/my" element={<MyPage />} />
+            </>
+          {/* )} */}
         </Routes>
-      </div>
+      </Layout>
     </Router>
   );
 }
 
 export default App;
-

@@ -8,6 +8,30 @@ a {
     color: black;
 }
 
+.search {
+    width: 340px;
+    height: 32px;
+    border: 1px solid;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.search input {
+    width: 280px;
+    border: 0;
+    outline: none;
+    text-align: center;
+}
+.search button {
+    width: 50px;
+    height: 24px;
+    border-radius: 12px;
+    border: 0;
+    background-color: #004AAD;
+    color: white;
+}
+
 .ChallengeList {
     display: flex;
     flex-direction: column;
@@ -16,7 +40,7 @@ a {
     gap: 24px;
 }
 
-.ChallengeList button {
+.ChallengeList .create {
     width: 92px;
     height: 24px;
     border: 0;
@@ -25,7 +49,7 @@ a {
     color: white;
 }
 
-.ChallengeList button a {
+.ChallengeList .create a {
     color: white;
 }
 
