@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { config } from '@_config/env.config';
-import { UserService } from '@_services/authService';
+import { config } from '@_config/env.config'; // @ 경로를 사용
+import { UserService } from '@_services/authService'; // @ 경로를 사용
 
 const userService = new UserService();
 const jwtSecret = config.JWT_SECRET;
@@ -19,7 +19,7 @@ const verifyToken = (token: string, secret: string): Promise<JwtPayload> => {
       if (decoded && typeof decoded === 'object' && 'id' in decoded) {
         resolve(decoded as JwtPayload);
       } else {
-        reject(new Error('잘못된 토큰입니다.'));
+        reject(new Error('Invalid token'));
       }
     });
   });
@@ -37,19 +37,19 @@ export const authenticateJWT = async (req: Request, res: Response, next: NextFun
           const user = await userService.findUserById(decoded.id);
           if (user) {
             req.user = user; 
-            next();
+            next(); 
           } else {
             res.sendStatus(403); 
           }
         } catch (error) {
-          console.error('사용자 검색 에러', error);
-          res.sendStatus(403);
+          console.error('User Retrieval Error:', error);
+          res.sendStatus(403); 
         }
       } else {
-        res.sendStatus(403);
+        res.sendStatus(403); 
       }
     } catch (err) {
-      console.error('JWT 검증 오류:', err);
+      console.error('JWT Verification Error:', err);
       res.sendStatus(403); 
     }
   } else {
