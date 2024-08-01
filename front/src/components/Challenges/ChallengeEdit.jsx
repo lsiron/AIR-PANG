@@ -119,36 +119,36 @@ function ChallengeEdit() {
     //}
 
     //Axios 사용
-    //try {
-    //  const response = await axios.patch(`http://localhost:8080/challenges/${id}`, updatedChallenge, {
-    //    headers: {
-    //      'Content-Type': 'application/json',
-    //    },
-    //  });
-    //
-    //  if (response.status === 200) {
-    //    navigate('/challenges');
-    //  } else {
-    //    console.error('Error updating challenge');
-    //  }
-    //} catch (error) {
-    //  console.error('Error updating challenge:', error);
-    //}
-
-    //로컬스토리지 사용
     try {
-      const challenges = JSON.parse(localStorage.getItem('challenges'));
-      const selectedChallenge = challenges.find(challenge => challenge.id === parseInt(id));
-      const index = challenges.indexOf(selectedChallenge)
-      // 새로운 데이터 추가
-      const newChallenges = {...selectedChallenge, ...updatedChallenge};
-      challenges[index] = newChallenges;
-      // 업데이트된 데이터를 로컬스토리지에 저장
-      localStorage.setItem('challenges', JSON.stringify(challenges));
-      navigate(-1);
+      const response = await axios.patch(`http://localhost:8080/challenges/${id}`, updatedChallenge, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    
+      if (response.status === 200) {
+        navigate('/challenges');
+      } else {
+        console.error('Error updating challenge');
+      }
     } catch (error) {
       console.error('Error updating challenge:', error);
     }
+
+    //로컬스토리지 사용
+    //try {
+    //  const challenges = JSON.parse(localStorage.getItem('challenges'));
+    //  const selectedChallenge = challenges.find(challenge => challenge.id === parseInt(id));
+    //  const index = challenges.indexOf(selectedChallenge)
+    //  // 새로운 데이터 추가
+    //  const newChallenges = {...selectedChallenge, ...updatedChallenge};
+    //  challenges[index] = newChallenges;
+    //  // 업데이트된 데이터를 로컬스토리지에 저장
+    //  localStorage.setItem('challenges', JSON.stringify(challenges));
+    //  navigate(-1);
+    //} catch (error) {
+    //  console.error('Error updating challenge:', error);
+    //}
   };
 
   const handleCancel = () => {

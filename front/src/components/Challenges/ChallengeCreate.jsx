@@ -44,6 +44,7 @@ function ChallengeCreate() {
     }
 
     const newChallenge = {
+      //user_name,
       title,
       description,
       start_date: startDate,
@@ -77,37 +78,37 @@ function ChallengeCreate() {
     //}
 
     //Axios 사용
-    //try {
-    //  const response = await axios.post('http://localhost:8080/challenges', newChallenge, {
-    //    headers: {
-    //      'Content-Type': 'application/json',
-    //    },
-    //  });
-    //
-    //  if (response.status === 200 || response.status === 201) {
-    //    navigate('/challenges');
-    //  } else {
-    //    console.error('Error creating challenge');
-    //  }
-    //} catch (error) {
-    //  console.error('Error creating challenge:', error);
-    //}
+    try {
+     const response = await axios.post('http://localhost:8080/challenges', newChallenge, {
+       headers: {
+         'Content-Type': 'application/json',
+       },
+     });
+    
+     if (response.status === 200 || response.status === 201) {
+       navigate('/challenges');
+     } else {
+       console.error('Error creating challenge');
+     }
+    } catch (error) {
+     console.error('Error creating challenge:', error);
+    }
 
     //로컬스토리지 사용
-    try {
-      // 기존 데이터 가져오기
-      const storedChallenges = JSON.parse(localStorage.getItem('challenges')) || [];
-      // 새로운 데이터 추가
-      storedChallenges.push(newChallengeWithId);
-      // 업데이트된 데이터를 로컬스토리지에 저장
-      localStorage.setItem('challenges', JSON.stringify(storedChallenges));
+  //   try {
+  //     // 기존 데이터 가져오기
+  //     const storedChallenges = JSON.parse(localStorage.getItem('challenges')) || [];
+  //     // 새로운 데이터 추가
+  //     storedChallenges.push(newChallengeWithId);
+  //     // 업데이트된 데이터를 로컬스토리지에 저장
+  //     localStorage.setItem('challenges', JSON.stringify(storedChallenges));
   
-      // 챌린지 페이지로 이동
-      navigate('/challenges');
+  //     // 챌린지 페이지로 이동
+  //     navigate('/challenges');
       
-    } catch (error) {
-      console.error('Error creating challenge:', error);
-    }
+  //   } catch (error) {
+  //     console.error('Error creating challenge:', error);
+  //   }
     
   };
 
