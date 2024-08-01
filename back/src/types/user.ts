@@ -4,5 +4,4 @@ export interface User extends RowDataPacket {
   id: number;
   googleId: string;
   name: string;
-  email: string;
 }
