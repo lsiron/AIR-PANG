@@ -48,7 +48,7 @@ const MapChart = () => {
     const fetchTopology = async () => {
       try {
         // 로컬 파일 import
-        const topology = await import('../json/kr-all.topo.json');
+        const topology = await import('../data/kr-all.topo.json');
 
         const data = [
           ['kr-4194', 10], ['kr-kg', 11], ['kr-cb', 12], ['kr-kn', 13],
@@ -76,7 +76,8 @@ const MapChart = () => {
           //이곳에 박스안의 내용 표시
           series: [{ 
             data: data,
-            name: '지역별 기후',
+            name: '지역별 날씨 정보',
+            showInLegend: false,  // 레전드에서 이 시리즈를 숨깁니다
             states: {
               hover: {
                 color: '#BADA55'

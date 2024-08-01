@@ -3,17 +3,18 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import highchartsMap from 'highcharts/modules/map';
 import proj4 from 'proj4';
+import axios from 'axios';
 import MapModal from './MapModal';
-// import axios from 'axios';  // axios 라이브러리 사용
+import mapDataKorea from '../data/kr-all.topo.json';
 
-// 라이브러리 추가: npm install highcharts highcharts-react-official @types/highcharts proj4
+// 라이브러리 추가: npm install highcharts highcharts-react-official @types/highcharts proj4 axios
 
 // Highcharts 맵 모듈 초기화
 if (typeof window !== 'undefined') {
   highchartsMap(Highcharts);
 }
 
-// proj4 설정 (맵 프로젝션에 필요)
+// proj4 설정 (좌표계를 활용한 맵 프로젝션에 필요)
 if (typeof window !== 'undefined') {
   window.proj4 = proj4;
 }
@@ -24,6 +25,60 @@ Highcharts.setOptions({
   }
 });
 
+// 날씨 데이터 요청 및 가공
+const fetchWeatherData = async (regions) => {
+  const API_KEY = 'K%2FZNcLjvnoyL3EcLLkqnWCJ1YA%2BcJz2SUZFC%2BeYY167cLcK5LV0LerMNhhoSI%2FohsNrsSwFz5OisyRPa7Yw%2FZg%3D%3D';
+  const BASE_URL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst';
+
+  const paramsList = regions.map(region => ({
+    base_date: '20240731',  // 날짜를 적절히 설정하세요
+    base_time: '0600',      // 시간을 적절히 설정하세요
+    nx: region.nx,
+    ny: region.ny
+  }));
+
+  try {
+    const weatherData = await Promise.all(paramsList.map(async (params) => {
+      const response = await axios.get(BASE_URL, {
+        params: {
+          serviceKey: API_KEY,
+          numOfRows: '10',
+          pageNo: '1',
+          dataType: 'JSON',
+          ...params
+        }
+      });
+      const items = response.data.response.body.items.item;
+      return items
+        .filter(item => item.category === 'T1H') // 'T1H' 항목만 필터링
+        .map(item => ({
+          region: mapRegionCodeToHighchartsCode(params.nx, params.ny),
+          temperature: parseFloat(item.obsrValue)
+        }));
+    }));
+
+    const processedData = weatherData.flat().map(item => [
+      item.region,
+      item.temperature
+    ]);
+
+    return processedData;
+  } catch (error) {
+    console.error('Error fetching weather data:', error);
+    return [];
+  }
+};
+
+// 좌표를 Highcharts 코드로 변환
+const mapRegionCodeToHighchartsCode = (nx, ny) => {
+  const region = mapDataKorea.objects['kr-all'].geometries.find(geo => {
+    return geo.properties['hc-middle-lon'] === ny && geo.properties['hc-middle-lat'] === nx;
+  });
+
+  if (region) return region.properties['hc-key'];
+  return 'kr-4194';  // 기본값
+};
+
 const MapChart = () => {
   const [mapOptions, setMapOptions] = useState({
     chart: {
@@ -32,12 +87,6 @@ const MapChart = () => {
     }
   });
 
-  // const handleRegionClick = (e) => {
-  //   const regionName = e.point.name;
-  //   const newWindow = window.open('', '_blank'); //새 창 속성
-  //   newWindow.document.write(`<h2>${regionName}</h2>`); //새 창에서 보여질 내용
-  //   newWindow.document.title = `${regionName}`; //새 창의 타이틀 
-  // };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('');
 
@@ -47,58 +96,25 @@ const MapChart = () => {
     setIsModalOpen(true);
   };
 
-  // const handleRegionClick = async (e) => {
-  //   const regionName = e.point.name;
-  //   setSelectedRegion(regionName);
-    
-  //   try {
-  //     const { data } = await axios.get(`http://your-backend-url/api/region-detail/${regionName}`);
-  //     setRegionData(prevData => ({...prevData, [regionName]: data}));
-  //   } catch (error) {
-  //     console.error("Error fetching region detail:", error);
-  //   }
-  
-  //   setIsModalOpen(true);
-  // };
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // 토폴로지 데이터 가져오기
-  //       const topology = await import('../json/kr-all.topo.json');
-  
-  //       // 서버에서 지역 데이터 가져오기
-  //       const { data } = await axios.get('http://your-backend-url/api/region-data'); // 백엔드 주소, 데이터 경로
-  
-  //       setRegionData(data);
-
   useEffect(() => {
-    const fetchTopology = async () => {
+    const fetchData = async () => {
       try {
-        // 로컬 파일 import
-        const topology = await import('../json/kr-all.topo.json');
+        const topology = await import('../data/kr-all.topo.json');
 
-        const data = [
-          ['kr-4194', 10], ['kr-kg', 11], ['kr-cb', 12], ['kr-kn', 13],
-          ['kr-2685', 14], ['kr-pu', 15], ['kr-2688', 16], ['kr-sj', 17],
-          ['kr-tj', 18], ['kr-ul', 19], ['kr-in', 20], ['kr-kw', 21],
-          ['kr-gn', 22], ['kr-cj', 23], ['kr-gb', 24], ['kr-so', 25],
-          ['kr-tg', 26], ['kr-kj', 27]
-        ]; 
-        //데이터를 수정하여 보여지는 내용 변경 ['id', 값]
-        // ['kr-4194', ], ['kr-kg', ], ['kr-cb', ], ['kr-kn', ],
-        // ['kr-2685', ], ['kr-pu', ], ['kr-2688', ], ['kr-sj', ],
-        // ['kr-tj', ], ['kr-ul', ], ['kr-in', ], ['kr-kw', ],
-        // ['kr-gn', ], ['kr-cj', ], ['kr-gb', ], ['kr-so', ],
-        // ['kr-tg', ], ['kr-kj', ]
+        const regions = topology.objects['kr-all'].geometries.map(geo => ({
+          nx: geo.properties['hc-middle-lat'],
+          ny: geo.properties['hc-middle-lon']
+        }));
+
+        const weatherData = await fetchWeatherData(regions);
 
         setMapOptions({
           chart: {
-            map: topology.default,  // .default를 사용하여 실제 데이터에 접근
+            map: topology.default,
             height: 600
           },
           title: {
@@ -110,15 +126,9 @@ const MapChart = () => {
               verticalAlign: 'bottom'
             }
           },
-          // 차트 아래 수치별 색상표 
-          // colorAxis: {
-          //   min: 0
-          // },
-          
-          //이곳에 박스안의 내용 표시
-          series: [{ 
-            data: data,
-            name: '지역별 기후',
+          series: [{
+            data: weatherData,
+            name: '기온',
             states: {
               hover: {
                 color: '#BADA55'
@@ -126,7 +136,7 @@ const MapChart = () => {
             },
             dataLabels: {
               enabled: true,
-              format: '{point.name}'
+              format: '{point.name}: {point.value}°C'
             },
             point: {
               events: {
@@ -136,11 +146,11 @@ const MapChart = () => {
           }]
         });
       } catch (error) {
-        console.error("Error loading topology:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchTopology();
+    fetchData();
   }, []);
 
   return (
