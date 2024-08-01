@@ -40,7 +40,7 @@ a {
     gap: 24px;
 }
 
-.ChallengeList .create {
+.ChallengeList .createChallenge {
     width: 92px;
     height: 24px;
     border: 0;
@@ -49,7 +49,7 @@ a {
     color: white;
 }
 
-.ChallengeList .create a {
+.ChallengeList .createChallenge a {
     color: white;
 }
 
