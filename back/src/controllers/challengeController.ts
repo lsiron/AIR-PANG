@@ -7,10 +7,9 @@ import {
   deleteChallenge,
 } from '@_services/challengeService';
 
-// 모든 챌린지 가져오기
 export const getAllChallengesController = async (req: Request, res: Response) => {
+  const searchQuery = req.query.search ? req.query.search.toString() : '';
   try {
-    const searchQuery = req.query.search ? req.query.search.toString() : '';
     const challenges = await getAllChallenges(searchQuery);
     res.status(200).json({ challenges });
   } catch (error) {
@@ -19,7 +18,6 @@ export const getAllChallengesController = async (req: Request, res: Response) =>
   }
 };
 
-// 특정 챌린지 가져오기
 export const getChallengeByIdController = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -31,11 +29,14 @@ export const getChallengeByIdController = async (req: Request, res: Response) =>
   }
 };
 
-// 챌린지 생성하기
 export const createChallengeController = async (req: Request, res: Response) => {
   const { title, description, start_date, end_date, tasks } = req.body;
   try {
-    const newChallenge = await createChallenge({ title, description, start_date, end_date, tasks});
+    const userId = req.user?.id;  
+    if (!userId) {
+      return res.status(401);
+    }
+    const newChallenge = await createChallenge(userId, { title, description, start_date, end_date, tasks });
     res.status(201).json(newChallenge);
   } catch (error) {
     console.error('챌린지 생성을 실패 했습니다.:', error);
@@ -43,11 +44,14 @@ export const createChallengeController = async (req: Request, res: Response) => 
   }
 };
 
-// 챌린지 수정하기
 export const updateChallengeController = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, description, start_date, end_date } = req.body;
   try {
+    const { challenge } = await getChallengeById(id);
+    if (challenge.user_id !== req.user?.id) {  
+      return res.status(403);
+    }
     const updatedChallenge = await updateChallenge(id, { title, description, start_date, end_date });
     res.status(204).json(updatedChallenge);
   } catch (error) {
@@ -56,10 +60,13 @@ export const updateChallengeController = async (req: Request, res: Response) => 
   }
 };
 
-// 챌린지 삭제하기
 export const deleteChallengeController = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
+    const { challenge } = await getChallengeById(id);
+    if (challenge.user_id !== req.user?.id) {  // Optional Chaining 사용
+      return res.status(403);
+    }
     await deleteChallenge(id);
     res.status(204).send();
   } catch (error) {
