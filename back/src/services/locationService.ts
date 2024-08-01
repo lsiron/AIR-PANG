@@ -3,6 +3,21 @@ import type { AnnualData, RealtimeData, MonthlyData } from '@_types/location';
 import { RowDataPacket } from 'mysql2';
 import { getMaxAQI } from '@_utils/aqi';
 
+// 주요 지역 목록 가져오는 함수
+export const getMainLocations = async (): Promise<string[]> => {
+  const query = `
+    SELECT DISTINCT address_a_name
+    FROM locations
+  `;
+
+  try {
+    const [results] = await connection.promise().query<{ address_a_name: string }[] & RowDataPacket[]>(query);
+    return results.map(row => row.address_a_name);
+  } catch (err) {
+    throw err;
+  }
+};
+
 // 지역 별 연평균 대기오염 물질 데이터 가져오는 함수
 export const getAnnualData = async (location: string): Promise<AnnualData[]> => {
   const query = `
