@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+// import { authenticateJWT } from '@_middlewares/authMiddleware'; // JWT 인증 미들웨어 가져오기
+import routes from '@_routes/index'; // 라우트 가져오기
+import startCronJob from '@_scripts/updateData'; // Cron job 가져오기
 import dotenv from 'dotenv';
 import passport from 'passport';
 import '@_config/passport.config'; 
@@ -24,25 +27,8 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Passport 초기화
-app.use(passport.initialize());
-
-// Google OAuth 2.0 라우트 설정
-app.get('/auth/google', googleAuth);
-
-app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/', session: false }),
-  googleAuthCallback
-);
-
-// 로그아웃
-app.post('/logout', logout);
-
-// 탈퇴
-app.delete('/delete', authenticateJWT, deleteUser);
-
-// 인증된 API 라우트
-app.use('/', authenticateJWT, routes);
+// JWT 인증 미들웨어를 원하는 라우트에 적용
+app.use('/', routes); // 모든 /api 경로에 JWT 인증 미들웨어 적용
 
 startCronJob();
 
