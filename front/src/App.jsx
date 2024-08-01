@@ -1,34 +1,35 @@
-import React from "react";
-import Font from "./components/Font";
-import AirQualityChart from "./components/AirQualityChart";
-import MapChart from "./components/MapChart";
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
+import MainPage from './pages/MainPage';
+import UriLocations from './pages/UriLocations';
+import Challenges from './pages/Challenges';
+import MyPage from './pages/MyPage';
+import Weather from './pages/Weather';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+  const handleLogout = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
-    <>
-      <Font />
-      <div className="App">
-        <h1
-          style={{
-            textAlign: "center",
-            marginBottom: "20px",
-          }}
-        >
-          공기팡 날씨 서비스
-        </h1>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <MapChart />
-          </div><div>
-          <AirQualityChart />
-        </div>
-      </div>
-    </>
+    <Router>
+      <Layout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/locations" element={<UriLocations />} />
+          {/* {isLoggedIn && ( */}
+            <>
+              <Route path="/weather" element={<Weather />} />
+              <Route path="/challenges/*" element={<Challenges />} />
+              <Route path="/my" element={<MyPage />} />
+            </>
+          {/* )} */}
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
 
