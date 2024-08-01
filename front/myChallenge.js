@@ -1,44 +1,108 @@
+import React, { useState, useEffect} from 'react'20.
+import axios from 'axios';
+
 const [
-  challengeCloseBtn,
-  challengeMakeBtn,
-  challengeForm,
   challengeTitleInput,
   challengeDescriptionInput,
   challengeStartDateInput,
   challengeEndDateInput,
-  todoInput,
-  addTodoList,
-  challengeShowList,
   todoListElement,
 ] = document.querySelectorAll("[id^=challenge-form]");
-let challengeList=[];
-let challengeEditingIndex = -1;
-let challenge = {};
-let canEditAndDelete = false;
-const todoList = [];
-let isEditing = false;
-const alertMessageElement = documnet.getElementById('alertMessage');
+const [challengeList, setChallengeList] = useState([]);
+const [challengeEditingIndex, setChallengeEditingIndex] = useState(-1);
+const [challenge, setChallenge] = useState({
+  title: '',
+  description: '',
+  startDate: '',
+  endDate: '',
+  tasks: []
+});
+const [todoInputs, setTodoInputs] = useState(['', '', '', '', '']);
+const [tasks, setTasks] = useState([]);
+const [isEditing, setIsEditing] = useState(false);
+const [previousValues, setPreviousValues] = useState({});
+const [alertMessage, setAlertMessage] = useState('');
+alertMessageElement = document.querySelector('#alertMessageElement')
 
-document.getElementById('challengeCloseBtn').addEventListener("click", () => {
-  document.getElementById('challengeModal').style.display= 'none';
-  alertMessageElement.style.display = 'none'
-})
+const handleInputChange = (index, value) => {
+  const newTodoInputs = [...todoInputs];
+  newTodoInputs[index] = value;
+  setTodoInputs(newTodoInputs);
+};
+let todoInput0 = document.getElementById('todoInput0')
+let todoInput1 = document.getElementById('todoInput1')
+let todoInput2 = document.getElementById('todoInput2')
+let todoInput3 = document.getElementById('todoInput3')
+let todoInput4 = document.getElementById('todoInput4')
+const handleAddTodo = () => {
+  todoInputs= [
+    todoInput0.value,
+    todoInput1.value,
+    todoInput2.value,
+    todoInput3.value,
+    todoInput4.value
+  ]
+  const cleanedTodoList = todoInputs.filter(item => item.trim() !== '');
+
+  if (cleanedTodoList.length < 2) {
+    setAlertMessage('최소 두 개의 할일을 만들어 주세요.')
+    return;
+  }
+  setTodoList([...cleanedTodoList]);
+}
+
+const storePreviousValues = () => {
+  setPreviousValues({
+    title: challenge.title,
+    description: challenge.description,
+    startDate: challenge.startDate,
+    endDate: challenge.endDate,
+    tasks: [...challenge.tasks]
+  })
+}
+const restorePreviousValues = () => {
+  setChallenge({
+    ...challenge,
+    title: previousValues.title || '',
+    description: previousValues.description || '',
+    startDate: previousValues.startDate || '',
+    endDate: previousValues.endDate || '',
+    tasks: previousValues.tasks || ['', '', '', '', '']
+  });
+};
 
 
 document.getElementById('challengeMakeBtn').addEventListener('click', ()=> {
   document.getElementById('challengeModal').style.display = 'block';
 })
 
+
 document.getElementById('addTodoList').addEventListener('click', () => {
-  const todo = todoInput.value
-  if (todo) {
-    todoList.push(todo);
-    renderTodoList(true);
-    todoInput.value = '';
+  useEffect (() => {
+    const initialTodoInputs = [
+      todoInput0.value,
+      todoInput1.value,
+      todoInput2.value,
+      todoInput3.value,
+      todoInput4.value,
+    ];
+    setTodoInputs(initialTodoInputs)
+  }, []);
+  for (let index=0; index < 5, index++) {
+    const todo = document.getElementById(`todoInput${index}`).value;
+    if (todo) {
+      todoList.push(todo);
+    }
   }
+  handleAddTodo();
+  renderTodoList(true)
 })
 
-
+document.getElementById('challengeCloseBtn').addEventListener("click", () => {
+  document.getElementById('challengeModal').style.display= 'none';
+  alertMessageElement.style.display = 'none'
+  restorePreviousValues();
+})
 
 document.getElementById('challengeForm').addEventListener('submit', async(e) => {
   e.preventDefault();
@@ -51,7 +115,7 @@ document.getElementById('challengeForm').addEventListener('submit', async(e) => 
       return;
   }
 
-  if(!title||!description||!startDate||!endDate) {
+  if (!title||!description||!startDate||!endDate) {
     alert("모두 입력해주세요");
     return;
   }
@@ -62,11 +126,10 @@ document.getElementById('challengeForm').addEventListener('submit', async(e) => 
       description: description,
       startDate: startDate,
       endDate: endDate,
-      todoList: todoList,
-      canEditAndDelete: true,
+      tasks: todoList,
     };
     const result = await postChallenge(challenge);
-    challengeList.push(result);
+    setChallengeList([...challengeList, result]);
   } else {
     const challenge = {
       author: window.user._id,
@@ -74,24 +137,27 @@ document.getElementById('challengeForm').addEventListener('submit', async(e) => 
       description: description,
       startDate: startDate,
       endDate: endDate,
-      todoList: todoList,
-      canEditAndDelete: true,
-      challengeId: challengeList[challengeEditingIndex].challengeId
+      tasks: todoList,
     };
-    const result = await putChallenge(challengeEditingIndex, challenge)
+    const result = await patchChallenge(challengeEditingIndex, challenge)
+    const updatedChallengeList = [...challengeList];
     challengeList[challengeEditingIndex] = result;
-    challengeEditingIndex = -1;
+    setChallengeList(updatedChallengeList);
+    setChallengeEditingIndex(-1);
   }
+  storePreviousValues();
   renderChallengeList();
   document.getElementById('challengeModal').style.display = 'none';
   alertMessageElement.style.display = 'none';
-  isEditing = false;
+  restorePreviousValues();
+  setIsEditing(false);
 })
 
 const renderChallengeList = async () => {
   const challengeListDiv = document.getElementById("challengeList");
   challengeListDiv.innerHTML = "";
   challengeList = await getChallenges();
+  setChallengeList(challenges);
   const fragment = document.createDocumentFragment();
   challengeList.forEach((item, index) => {
     const challengeItemDiv = document.createElement("div");
@@ -127,11 +193,14 @@ const openChallengeModal = async (challenge, index) => {
       const editButton = document.createElement("button");
       editButton.innerText = "수정하기";
       editButton.addEventListener("click", () => {
-        challengeTitleInput.value = challenge.title;
-        challengeDescriptionInput.value = challenge.description;
-        challengeStartDateInput.value = challenge.startDate;
-        challengeEndDateInput.value = challenge.endDate;
-        challengeEditingIndex = index;
+        setChallenge({
+          title: challenge.title,
+          description: challenge.description,
+          startDate: challenge.startDate,
+          endDate: challenge.endDate,
+          tasks : challenge.setTasks
+        })
+        setChallengeEditingIndex(index);
         renderTodoList(true);
       });
       const deleteButton2 = document.createElement("button");
@@ -159,7 +228,8 @@ const renderTodoList= async(isEditing) => {
       deleteButton.addEventListener('click', async ()=> {
         await deleteTodoList(challenge.challengeId, todo);
         todoList.splice(index, 1);
-        renderTodoList();
+        setTasks(todoList);
+        renderTodoList(true);
       })
       li.appendChild(deleteButton);
     }
@@ -169,92 +239,59 @@ const renderTodoList= async(isEditing) => {
 
 const getTodoList = async (challengeId) => {
   try {
-    const response = await fetch(`/challenges/${challengeId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const result = await response.json();
-    return result;
+    const response = await axios.get(`/challenges/${challengeId}`);
+    return response.data;
   } catch (error) {
     console.error('Error:', error);
   }
-}
+};
 
 const getChallenges = async () => {
   try {
-      const response = await fetch('/challenges', {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-      });
-      const result = await response.json();
-      return result;
+    const response = await axios.get('/challenges');
+    return response.data;
   } catch (error) {
-      console.error('Error:', error);
+    console.error('Error:', error);
   }
 };
 
 const postChallenge = async (challenge) => {
   try {
-      const response = await fetch('/challenges', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(challenge)
-      });
-      const result = await response.json();
-      return result;
-  } catch (error) {
-      console.error('Error:', error);
-  }
-};
-
-
-const challengeJoin = async (id, challengeId) => {
-  try {
-      const response = await fetch(`/challenges/${challengeId}/join`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: id })
-      });
-      const result = await response.json();
-      return result;
-  } catch (error) {
-      console.error('Error:', error);
-  }
-};
-
-const putChallenge = async (index, challenge) => {
-  try {
-    const response = await fetch(`/challenges/${challenge.challengeId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(challenge)
+    const response = await axios.post('/challenges', challenge, {
+      headers: { 'Content-Type': 'application/json' }
     });
-    const result = await response.json();
-    return result;
+    return response.data;
   } catch (error) {
     console.error('Error:', error);
   }
-}
+};
+
+
+const patchChallenge = async (index, challenge) => {
+  try {
+    const response = await axios.patch(`/challenges/${challenge.challengeId}`, challenge, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 
 const deleteChallenge = async (challengeId) => {
   try {
-    const response = await fetch(`/challenges/${challengeId}`, {
-      method: 'DELETE'
-    })
-    const result = await response.json();
-    return result;
+    const response = await axios.delete(`/challenges/${challengeId}`);
+    return response.data;
   } catch (error) {
     console.error("Error:", error);
   }
-}
+};
+
 const deleteTodoList = async (challengeId, item) => {
   try {
-    const response = await fetch(`/challenges/${challengeId}/${item.id}`, {
-      method: 'DELETE'
-    })
-    const result = await response.json();
-    return result;
+    const response = await axios.delete(`/challenges/${challengeId}/${item.id}`);
+    return response.data;
   } catch (error) {
     console.error("Error:", error);
   }
-}
+};
