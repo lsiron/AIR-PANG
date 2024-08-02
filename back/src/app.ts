@@ -1,16 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-// import { authenticateJWT } from '@_middlewares/authMiddleware'; // JWT 인증 미들웨어 가져오기
-import routes from '@_routes/index'; // 라우트 가져오기
-import startCronJob from '@_scripts/updateData'; // Cron job 가져오기
+import routes from '@_routes/index'; 
+import startCronJob from '@_scripts/updateData'; 
 import dotenv from 'dotenv';
 import passport from 'passport';
 import session from 'express-session';
 import '@_config/passport.config'; 
 import { authenticateJWT } from '@_middlewares/authMiddleware'; 
-import routes from '@_routes/index'; 
-import startCronJob from '@_scripts/updateData'; 
 import { googleAuth, googleAuthCallback, logout, deleteUser } from '@_controllers/authController'; 
 
 dotenv.config();
@@ -37,13 +34,6 @@ app.use(session({
 // Passport 초기화
 app.use(passport.initialize());
 
-// Google OAuth 2.0 라우트 설정
-app.get('/auth/google', googleAuth);
-
-app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/', session: false }),
-  googleAuthCallback
-);
 
 // 로그아웃
 app.post('/logout', logout);
