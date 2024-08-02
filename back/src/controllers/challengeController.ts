@@ -31,7 +31,7 @@ export const getChallengeByIdController = async (req: Request, res: Response) =>
 
 export const createChallengeController = async (req: Request, res: Response) => {
   const { title, description, start_date, end_date, tasks } = req.body;
-  try { /** 
+  try { /**
     const userId = req.user?.id;  
     if (!userId) {
       return res.status(401);
@@ -56,7 +56,7 @@ export const updateChallengeController = async (req: Request, res: Response) => 
     }
     const updatedChallenge = await updateChallenge(id, { title, description, start_date, end_date });
     res.status(204).json(updatedChallenge);
-    */
+  */
   } catch (error) {
     console.error(`${id} 아이디의 챌린지 수정을 실패 했습니다.:`, error);
     res.status(500).send('서버 오류발생');
@@ -65,14 +65,14 @@ export const updateChallengeController = async (req: Request, res: Response) => 
 
 export const deleteChallengeController = async (req: Request, res: Response) => {
   const { id } = req.params;
-  try { /** 
+  try { /**
     const { challenge } = await getChallengeById(id);
     if (challenge.user_id !== req.user?.id) {  // Optional Chaining 사용
       return res.status(403);
     }
     await deleteChallenge(id);
     res.status(204).send();
-    */
+  */
   } catch (error) {
     console.error(`${id} 아이디의 챌린지 삭제를 실패 했습니다.:`, error);
     res.status(500).send('서버 오류발생');
