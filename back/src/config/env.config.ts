@@ -8,4 +8,5 @@ export const config: Config = {
   CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || '',
   REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI || '',
   JWT_SECRET: process.env.JWT_SECRET || '', 
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || '', 
 };

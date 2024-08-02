@@ -1,9 +1,8 @@
-import { User } from '@_types/user'; // @ 경로를 사용하여 import
+// index.d.ts
+import { User as CustomUser } from '@_types/user'; // 사용자 정의 User 타입 import
 
 declare global {
   namespace Express {
-    interface Request {
-      user?: User; // 사용자 정의 User 타입 추가
-    }
+    interface User extends CustomUser {} // Express.User를 사용자 정의 User로 확장
   }
 }
