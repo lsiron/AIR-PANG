@@ -1,14 +1,19 @@
 import React from "react";
 import MapChart from "../components/Map/MapChart";
-import LocationDetail from "../components/Location/LocationDetail";
-import LocationPage from "../components/Location/LocationPage";
-import Locations from "../components/Location/Locations";
+// import LocationDetail from "../components/Location/LocationDetail";
+// import LocationPage from "../components/Location/LocationPage";
+// import Locations from "../components/Location/Locations";
+// import MonthlyAqi from "../components/Chart/MonthlyAqi";
 
 function UriLocations() {
   return (
-    <div>
+    <div
+      style={{
+        textAlign: "center"
+      }}
+    >
       <h1>우리동네 찾아보기</h1>
-      <p>여기가 우리동네 찾아보기 페이지입니다.</p>
+      <p>지역별 대기질지수를 확인해보세요!</p>
       <div
         style={{
           display: "flex",
@@ -25,6 +30,7 @@ function UriLocations() {
           alignItems: "center",
         }}
       >
+        {/* <MonthlyAqi /> */}
         {/* <LocationDetail /> */}
         {/* <Locations /> */}
         {/* <LocationPage /> */}

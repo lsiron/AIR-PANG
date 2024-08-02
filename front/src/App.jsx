@@ -8,7 +8,7 @@ import MyPage from './pages/MyPage';
 import Weather from './pages/Weather';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);  //로그인 상태 true/false 사용하여 변경
 
   const handleLogout = () => {
     setIsLoggedIn(true);

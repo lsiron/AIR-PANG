@@ -5,12 +5,12 @@ import cookieParser from 'cookie-parser';
 import routes from '@_routes/index'; // 라우트 가져오기
 import startCronJob from '@_scripts/updateData'; // Cron job 가져오기
 import dotenv from 'dotenv';
-import passport from 'passport';
+// import passport from 'passport';
 import '@_config/passport.config'; 
-import { authenticateJWT } from '@_middlewares/authMiddleware'; 
-import routes from '@_routes/index'; 
-import startCronJob from '@_scripts/updateData'; 
-import { googleAuth, googleAuthCallback, logout, deleteUser } from '@_controllers/authController'; 
+// import { authenticateJWT } from '@_middlewares/authMiddleware'; 
+// import routes from '@_routes/index'; 
+// import startCronJob from '@_scripts/updateData'; 
+// import { googleAuth, googleAuthCallback, logout, deleteUser } from '@_controllers/authController'; 
 
 // 환경 변수 설정
 dotenv.config();
