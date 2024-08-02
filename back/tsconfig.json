@@ -1,5 +1,15 @@
 {
   "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./src/types", "./node_modules/@types"], 
+    "types": ["node", "express"],
     "baseUrl": "./src",
     "paths": {
       "@_config/*": ["config/*"],
@@ -9,15 +19,9 @@
       "@_scripts/*": ["scripts/*"],
       "@_services/*": ["services/*"],
       "@_types/*": ["types/*"],
-      "@_utils/*": ["utils/*"]
-    },
-    "target": "es6",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+      "@_utils/*": ["utils/*"],
+      "@_models/*": ["models/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
