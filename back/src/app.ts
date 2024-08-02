@@ -9,8 +9,6 @@ import passport from 'passport';
 import session from 'express-session';
 import '@_config/passport.config'; 
 import { authenticateJWT } from '@_middlewares/authMiddleware'; 
-import routes from '@_routes/index'; 
-import startCronJob from '@_scripts/updateData'; 
 import { googleAuth, googleAuthCallback, logout, deleteUser } from '@_controllers/authController'; 
 
 dotenv.config();
@@ -52,7 +50,7 @@ app.post('/logout', logout);
 app.delete('/delete', authenticateJWT, deleteUser);
 
 // 인증된 API 라우트
-app.use('/', authenticateJWT, routes);
+app.use('/', routes);
 
 startCronJob();
 
