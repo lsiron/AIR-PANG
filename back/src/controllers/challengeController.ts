@@ -18,7 +18,7 @@ export const getAllChallengesController = async (req: Request, res: Response) =>
     res.status(500).send('서버 오류발생');
   }
 };
-
+ 
 export const getChallengeByIdController = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
