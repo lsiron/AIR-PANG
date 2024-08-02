@@ -7,10 +7,9 @@ import { User } from '@_types/user';
 
 const userService = new UserService();
 
-export const googleAuth = passport.authenticate('google', { scope: ['profile'] }); 
+export const googleAuth = passport.authenticate('google', { scope: ['profile'] });
 
 export const googleAuthCallback = (req: Request, res: Response) => {
- 
   passport.authenticate('google', { session: false }, async (err, user, info) => {
     console.log(user);
     if (err) {
@@ -24,17 +23,15 @@ export const googleAuthCallback = (req: Request, res: Response) => {
     }
 
     console.log('사용자 인증:', user);
-    const userObj = user as User; 
+    const userObj = user as User;
     try {
-      
       const token = jwt.sign({ id: userObj.id }, config.JWT_SECRET, { expiresIn: '1h' });
       console.log('JWT created:', token);
 
-      
-      res.cookie('jwt', token, { httpOnly: true, secure: false});
+      res.cookie('jwt', token, { httpOnly: true, secure: false });
       console.log('JWT cookie set');
 
-      res.redirect('/'); 
+      res.redirect(process.env.CLIENT_URL || '/'); 
     } catch (tokenError) {
       console.error('Error creating JWT:', tokenError);
       res.status(500).json({ message: '토큰 생성 실패' });
@@ -54,7 +51,6 @@ export const logout = (req: Request, res: Response) => {
   });
 };
 
-// 계정 삭제
 export const deleteUser = async (req: Request, res: Response) => {
   if (req.user) {
     const user = req.user as User;

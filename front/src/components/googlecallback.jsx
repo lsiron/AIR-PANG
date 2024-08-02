@@ -6,24 +6,28 @@ const GoogleCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const fetchToken = async () => {
       try {
-        // 서버에서 JWT를 쿠키로 반환하기 때문에 별도의 요청 없이 클라이언트에서는 JWT를 쿠키에서 가져온다.
-        const jwt = Cookies.load('jwt');
-        if (jwt) {
-        // JWT가 쿠키에 존재하면 홈 페이지로 리디렉션
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (token) {
+          // JWT를 쿠키에 저장
+          Cookies.save('jwt', token, { path: '/' });
+
+          // 메인 페이지로 리디렉션
           navigate('/');
         } else {
-        // JWT가 없으면 로그인 실패 페이지로 리디렉션
+          // 인증 코드가 없으면 로그인 페이지로 리디렉션
           navigate('/login');
         }
       } catch (error) {
-        console.error('Authentication check error:', error);
+        console.error('Authentication error:', error);
         navigate('/login');
       }
     };
 
-    checkAuth();
+    fetchToken();
   }, [navigate]);
 
   return <div>Loading...</div>;
