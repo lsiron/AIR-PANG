@@ -4,7 +4,7 @@ import axios from 'axios';
 
 function DataFetcher() {
   useEffect(() => {
-    axios.get('http://localhost:8080/locations')
+    axios.get('http://localhost:8080/locations/detail')
       .then(response => {
         console.log('Fetch된 데이터:', response.data);
       })

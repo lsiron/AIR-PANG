@@ -16,9 +16,9 @@ const MonthlyAqi = () => {
             try {
                 const response = await axios.get('http://localhost:8080/locations/detail', {
                     params: {
-                        location: '서울',
-                        subLocation: '강동구'
-                    }
+                        location: '전남',
+                        subLocation: '여수시'
+                    } // 이부분을 드랍다운으로 할지? 
                 });
                 setData(response.data);
             } catch (err) {

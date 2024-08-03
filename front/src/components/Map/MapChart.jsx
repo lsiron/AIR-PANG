@@ -144,7 +144,8 @@ const MapChart = () => {
         constructorType={'mapChart'}
       />
       <MapModal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>{selectedRegion}</h2>
+        {/* <h2>{selectedRegion}</h2> */}
+        <a href='http://localhost:3000/locations=${selectedRegion}'>{selectedRegion}</a> 
       </MapModal>
     </div>
   );
