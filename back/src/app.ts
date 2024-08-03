@@ -41,27 +41,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// 구글 인증 콜백 라우트
-app.get('/auth/google/callback', (req: Request, res: Response, next: NextFunction) => {
-  console.log('Google callback route hit');
-  
-  passport.authenticate('google', { session: false }, async (err, user, info) => {
-    if (err) {
-      console.error('Authentication error:', err);
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
-
-    if (!user) {
-      console.error('No user found');
-      return res.status(401).json({ message: 'Authentication Failed' });
-    }
-
-    console.log('Authenticated user:', user);
-
-    // 성공 시 클라이언트로 리다이렉트
-    res.redirect(process.env.CLIENT_URL || '/');
-  })(req, res, next);
-});
 
 // 인증된 API 라우트
 app.use('/', routes);
