@@ -46,7 +46,7 @@ document.getElementById('challengeForm').addEventListener('submit', async(e) => 
     const updatedChallengeList = [...challengeList];
     challengeList[challengeEditingIndex] = result;
     setChallengeList(updatedChallengeList);
-    setChallengeEditingIndex(-1);
+    setCrhallengeEditingIndex(-1);
   }
   storePreviousValues();
   renderChallengeList();

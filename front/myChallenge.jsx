@@ -10,6 +10,8 @@ const [challengeEditingIndex, setChallengeEditingIndex] = useState(-1);
 const [todoInputs, setTodoInputs] = useState(['', '', '', '', '']);
 const [previousValues, setPreviousValues] = useState({});
 const [alertMessage, setAlertMessage] = useState('');
+import {  renderChallengeList, openChallengeModal, getChallenges, deleteChallenge} from './renderChallengeList'
+import {renderTodoList, deleteTodoList, getTodoList,} from './renderTodoList'
 const MyComponent = () => {
   const [isMainModalOpen, setIsMainModalOpen] = useState(false);
   const [isSubModalOpen, setIsSubModalOpen] = useState(false);
@@ -108,12 +110,12 @@ const MyComponent = () => {
       <button onClick={openMainModal} id="challengeMakeBtn">
         챌린지 만들기
       </button>
+      <div id = "challengeList"></div>
       {isMainModalOpen && (
         <div className="modal">
           <h3>
             챌린지 만들기
-          </h3>
-          <form id = 'challenge-form' onSubmit={handleSubmit}>
+          </h3>          <form id = 'challenge-form' onSubmit={handleSubmit}>
             <input type="text" ref={titleRef} placeholder='챌린지 제목을 입력해주세요.'/>
             <input type="text" ref={descriptionRef} placeholder='챌린지 설명을 입력해주세요.'/>
             <div>
@@ -121,7 +123,7 @@ const MyComponent = () => {
               <input type="date" ref={endDateRef} placeholder='챌린지 종료일'/>
             </div>
             {alertMessage && (
-              <div id="alertMessageElement" style={{color:'red'}}>
+              <div id="alertMessage" style={{color:'red'}}>
                 {alertMessage}
               </div>)}
             <button id = "addTodoList" onClick={openSubModal}>
@@ -177,4 +179,27 @@ const restorePreviousValues = () => {
     endDate: previousValues.endDate || '',
     tasks: previousValues.tasks || ['', '', '', '', '']
   });
+};
+
+const postChallenge = async (challenge) => {
+  try {
+    const response = await axios.post('/challenges', challenge, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
+const patchChallenge = async (index, challenge) => {
+  try {
+    const response = await axios.patch(`/challenges/${challenge.challengeId}`, challenge, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
 };

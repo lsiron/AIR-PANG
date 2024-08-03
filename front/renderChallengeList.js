@@ -1,6 +1,15 @@
 import axios from 'axios';
 const [challengeList, setChallengeList] = useState([]);
-const renderChallengeList = async () => {
+import {renderTodoList, deleteTodoList, getTodoList,} from './renderTodoList'
+const [challenge, setChallenge] = useState({
+  title: '',
+  description: '',
+  startDate: '',
+  endDate: '',
+  tasks: []
+});
+alertMessageElement = document.querySelector('#alertMessageElement')
+export const renderChallengeList = async () => {
   const challengeListDiv = document.getElementById("challengeList");
   challengeListDiv.innerHTML = "";
   challengeList = await getChallenges();
@@ -29,7 +38,7 @@ const renderChallengeList = async () => {
   });
   challengeListDiv.appendChild(fragment);
 };
-const openChallengeModal = async (challenge, index) => {
+export const openChallengeModal = async (challenge, index) => {
     document.getElementById('challengeModal').style.display = 'block';
     if (new Date() > challenge.endDate) {
       alertMessageElement.innerText = '종료된 챌린지는 수정이나 삭제가 불가합니다'
@@ -64,7 +73,7 @@ const openChallengeModal = async (challenge, index) => {
     }
 }
 
-const getChallenges = async () => {
+export const getChallenges = async () => {
   try {
     const response = await axios.get('/challenges');
     return response.data;
@@ -72,7 +81,7 @@ const getChallenges = async () => {
     console.error('Error:', error);
   }
 };
-const deleteChallenge = async (challengeId) => {
+export const deleteChallenge = async (challengeId) => {
   try {
     const response = await axios.delete(`/challenges/${challengeId}`);
     return response.data;
@@ -80,9 +89,3 @@ const deleteChallenge = async (challengeId) => {
     console.error("Error:", error);
   }
 };
-module.exports = {
-  renderChallengeList,
-  openChallengeModal,
-  getChallenges,
-  deleteChallenge,
-}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 const [isEditing, setIsEditing] = useState(false);
-const renderTodoList= async(isEditing) => {
+export const renderTodoList= async(isEditing) => {
   let todoListElement = document.createElement('ul')
   todoListElement.innerText = '';
   todoList = await getTodoList(challenge.challengeId);
@@ -21,7 +21,7 @@ const renderTodoList= async(isEditing) => {
     todoListElement.appendChild(li);
   })
 }
-const getTodoList = async (challengeId) => {
+export const getTodoList = async (challengeId) => {
   try {
     const response = await axios.get(`/challenges/${challengeId}`);
     return response.data;
@@ -29,7 +29,7 @@ const getTodoList = async (challengeId) => {
     console.error('Error:', error);
   }
 };
-const deleteTodoList = async (challengeId, item) => {
+export const deleteTodoList = async (challengeId, item) => {
   try {
     const response = await axios.delete(`/challenges/${challengeId}/${item.id}`);
     return response.data;
@@ -37,8 +37,3 @@ const deleteTodoList = async (challengeId, item) => {
     console.error("Error:", error);
   }
 };
-module.exports = {
-  renderTodoList,
-  deleteTodoList,
-  getTodoList,
-}
