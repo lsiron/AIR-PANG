@@ -115,7 +115,8 @@ const MyComponent = () => {
         <div className="modal">
           <h3>
             챌린지 만들기
-          </h3>          <form id = 'challenge-form' onSubmit={handleSubmit}>
+          </h3>          
+          <form id = 'challenge-form' onSubmit={handleSubmit}>
             <input type="text" ref={titleRef} placeholder='챌린지 제목을 입력해주세요.'/>
             <input type="text" ref={descriptionRef} placeholder='챌린지 설명을 입력해주세요.'/>
             <div>
