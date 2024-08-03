@@ -13,7 +13,7 @@ function ChallengeEdit() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:8080/challenges/${id}`)
+    fetch(`http://localhost:8080/challenges/${id}`, {credentials: 'include'})
       .then(response => response.json())
       .then(data => {
         setTitle(data.challenge.title);
@@ -71,6 +71,7 @@ function ChallengeEdit() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedChallenge),
+        credentials: 'include'
       });
 
       if (response.ok) {
