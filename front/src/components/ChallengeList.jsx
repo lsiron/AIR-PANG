@@ -6,7 +6,7 @@ function ChallengeList() {
   const [search, setSearch] = useState('');
 
   const fetchChallenges = (searchQuery = '') => {
-    fetch(`http://localhost:8080/challenges?search=${searchQuery}`)
+    fetch(`http://localhost:8080/challenges?search=${searchQuery}`, {credentials: 'include'})
       .then(response => response.json())
       .then(data => setChallenges(data.challenges))
       .catch(error => console.error('Error fetching challenges:', error));
