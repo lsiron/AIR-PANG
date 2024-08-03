@@ -57,6 +57,7 @@ function ChallengeCreate() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newChallenge),
+        credentials: 'include'
       });
 
       if (response.ok) {

@@ -8,7 +8,7 @@ function ChallengeDetail() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:8080/challenges/${id}`)
+    fetch(`http://localhost:8080/challenges/${id}`, {credentials: 'include'})
       .then(response => response.json())
       .then(data => {
         setChallenge(data.challenge);
@@ -23,6 +23,7 @@ function ChallengeDetail() {
       try {
         const response = await fetch(`http://localhost:8080/challenges/${id}`, {
           method: 'DELETE',
+          credentials: 'include'
         });
         if (response.ok) {
           navigate('/challenges');
