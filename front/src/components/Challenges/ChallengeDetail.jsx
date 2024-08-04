@@ -139,7 +139,13 @@ function ChallengeDetail() {
       
       <ul className="to-dos">
         {tasks.map((task, index) => (
-          <li key={index}>{task.description} - {task.is_completed ? '완료' : '미완료'}</li>
+          <li key={index}>
+            <input
+              type="checkbox"
+              checked={task.is_completed}
+              readOnly
+            /> {task.description}
+          </li>
         ))}
       </ul>
 

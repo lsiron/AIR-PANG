@@ -195,6 +195,7 @@ function ChallengeEdit() {
         <div className="modal">
           <div className="modal-content">
             <h2>할 일 수정하기</h2>
+            <p>할 일은 최대 5개까지 생성 가능합니다.</p>
             {modalTasks.map((task, index) => (
               <input
                 key={index}
