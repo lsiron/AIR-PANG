@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/ChallengeEdit.css';
 
+axios.defaults.withCredentials = true;
+
 function ChallengeEdit() {
   const { id } = useParams();
   const [title, setTitle] = useState('');
@@ -29,37 +31,37 @@ function ChallengeEdit() {
   //}, [id]);
 
   //Axios 사용
-  //useEffect(() => {
-  //  const fetchChallenge = async () => {
-  //    try {
-  //      const response = await axios.get(`http://localhost:8080/challenges/${id}`);
-  //      const data = response.data;
-  //      setTitle(data.challenge.title);
-  //      setDescription(data.challenge.description);
-  //      setStartDate(data.challenge.start_date.split('T')[0]);
-  //      setEndDate(data.challenge.end_date.split('T')[0]);
-  //      setTasks(data.tasks.map(task => task.description));
-  //    } catch (error) {
-  //      console.error('Error fetching challenge:', error);
-  //    }
-  //  };
-  //
-  //  fetchChallenge();
-  //}, [id]);
+  useEffect(() => {
+   const fetchChallenge = async () => {
+     try {
+       const response = await axios.get(`http://localhost:8080/challenges/${id}`);
+       const data = response.data;
+       setTitle(data.challenge.title);
+       setDescription(data.challenge.description);
+       setStartDate(data.challenge.start_date.split('T')[0]);
+       setEndDate(data.challenge.end_date.split('T')[0]);
+       setTasks(data.tasks.map(task => task.description));
+     } catch (error) {
+       console.error('Error fetching challenge:', error);
+     }
+   };
+  
+   fetchChallenge();
+  }, [id]);
 
   //로컬스토리지 사용
-  useEffect(()=> {
-    const challenges = JSON.parse(localStorage.getItem('challenges'));
-    const selectedChallenge = challenges.find(challenge => challenge.id === parseInt(id));
+  // useEffect(()=> {
+  //   const challenges = JSON.parse(localStorage.getItem('challenges'));
+  //   const selectedChallenge = challenges.find(challenge => challenge.id === parseInt(id));
     
-    if (selectedChallenge) {
-      setTitle(selectedChallenge.title);
-      setDescription(selectedChallenge.description);
-      setStartDate(selectedChallenge.start_date);
-      setEndDate(selectedChallenge.end_date);
-      setTasks(selectedChallenge.tasks.map(task => task.description));
-    }
-  }, [id]);
+  //   if (selectedChallenge) {
+  //     setTitle(selectedChallenge.title);
+  //     setDescription(selectedChallenge.description);
+  //     setStartDate(selectedChallenge.start_date);
+  //     setEndDate(selectedChallenge.end_date);
+  //     setTasks(selectedChallenge.tasks.map(task => task.description));
+  //   }
+  // }, [id]);
 
   const handleTaskChange = (index, value) => {
     const newTasks = [...modalTasks];
@@ -120,40 +122,46 @@ function ChallengeEdit() {
     //}
 
     //Axios 사용
-    // try {
-    //   const response = await axios.patch(`http://localhost:8080/challenges/${id}`, updatedChallenge, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   });
+    try {
+      const response = await axios.patch(`http://localhost:8080/challenges/${id}`, updatedChallenge, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     
-    //   if (response.status === 200) {
-    //     navigate('/challenges');
-    //   } else {
-    //     console.error('Error updating challenge');
-    //   }
-    // } catch (error) {
-    //   console.error('Error updating challenge:', error);
-    // }
+      if (response.status === 200) {
+        navigate('/challenges');
+      } else {
+        console.error('Error updating challenge');
+      }
+    } catch (error) {
+      console.error('Error updating challenge:', error);
+    }
 
     //로컬스토리지 사용
-    try {
-     const challenges = JSON.parse(localStorage.getItem('challenges'));
-     const selectedChallenge = challenges.find(challenge => challenge.id === parseInt(id));
-     const index = challenges.indexOf(selectedChallenge)
-     // 새로운 데이터 추가
-     const newChallenges = {...selectedChallenge, ...updatedChallenge};
-     challenges[index] = newChallenges;
-     // 업데이트된 데이터를 로컬스토리지에 저장
-     localStorage.setItem('challenges', JSON.stringify(challenges));
-     navigate(-1);
-    } catch (error) {
-     console.error('Error updating challenge:', error);
-    }
+    // try {
+    //  const challenges = JSON.parse(localStorage.getItem('challenges'));
+    //  const selectedChallenge = challenges.find(challenge => challenge.id === parseInt(id));
+    //  const index = challenges.indexOf(selectedChallenge)
+    //  // 새로운 데이터 추가
+    //  const newChallenges = {...selectedChallenge, ...updatedChallenge};
+    //  challenges[index] = newChallenges;
+    //  // 업데이트된 데이터를 로컬스토리지에 저장
+    //  localStorage.setItem('challenges', JSON.stringify(challenges));
+    //  navigate(-1);
+    // } catch (error) {
+    //  console.error('Error updating challenge:', error);
+    // }
   };
 
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  const handleDeleteTask = (e, index) => {
+    const newTasks = tasks.filter((_, taskIndex) => taskIndex !== index);
+    e.preventDefault();
+    setTasks(newTasks);
   };
 
   return (
@@ -174,7 +182,7 @@ function ChallengeEdit() {
           <button className='add' type="button" onClick={handleOpenModal}>할 일 수정하기</button>
           <ul>
             {tasks.map((task, index) => (
-              <li key={index}>{task}</li>
+              <li key={index}>{task} <a href="#" onClick={(e)=> handleDeleteTask(e, index)}>X</a></li>
             ))}
           </ul>
         </div>

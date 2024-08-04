@@ -1,7 +1,21 @@
 import connection from '@_config/db.config';
-import type { AnnualData, RealtimeData, MonthlyData } from '@_types/location';
-import { RowDataPacket } from 'mysql2';
+import type { AnnualData, RealtimeData, MonthlyData, CombinedAirQualityData, MainLocationRow } from '@_types/location';
 import { getMaxAQI } from '@_utils/aqi';
+
+// 주요 지역 목록 가져오는 함수
+export const getMainLocations = async (): Promise<string[]> => {
+  const query = `
+    SELECT DISTINCT address_a_name
+    FROM locations
+  `;
+
+  try {
+    const [results] = await connection.promise().query<MainLocationRow[]>(query);
+    return results.map((row) => row.address_a_name);
+  } catch (err) {
+    throw err;
+  }
+};
 
 // 지역 별 연평균 대기오염 물질 데이터 가져오는 함수
 export const getAnnualData = async (location: string): Promise<AnnualData[]> => {
@@ -26,7 +40,7 @@ export const getAnnualData = async (location: string): Promise<AnnualData[]> => 
   `;
 
   try {
-    const [results] = await connection.promise().query<AnnualData[] & RowDataPacket[]>(query, [location]);
+    const [results] = await connection.promise().query<AnnualData[]>(query, [location]);
     if (!results || results.length === 0) {
       throw new Error('주어진 지역의 연평균 데이터가 없습니다.');
     }
@@ -61,7 +75,7 @@ export const getRealtimeData = async (location: string): Promise<RealtimeData[]>
   `;
 
   try {
-    const [results] = await connection.promise().query<RealtimeData[] & RowDataPacket[]>(query, [location]);
+    const [results] = await connection.promise().query<RealtimeData[]>(query, [location]);
     if (!results || results.length === 0) {
       throw new Error('주어진 지역의 실시간 데이터가 없습니다.');
     }
@@ -70,7 +84,6 @@ export const getRealtimeData = async (location: string): Promise<RealtimeData[]>
     throw err;
   }
 };
-
 
 // 지역별 월평균 대기오염 물질 데이터 가져오는 함수
 export const getMonthlyData = async (location: string, subLocation: string): Promise<MonthlyData> => {
@@ -101,11 +114,11 @@ export const getMonthlyData = async (location: string, subLocation: string): Pro
   `;
 
   try {
-    const [results] = await connection.promise().query<RowDataPacket[]>(query, [location, subLocation]);
+    const [results] = await connection.promise().query<CombinedAirQualityData[]>(query, [location, subLocation]);
     if (!results || results.length === 0) {
       throw new Error('주어진 지역의 월평균 데이터가 없습니다.');
     }
-    const airQualityData = results[0] as RealtimeData;
+    const airQualityData = results[0];
     const detailedData: MonthlyData = {
       locations: {
         id: airQualityData.location_id,

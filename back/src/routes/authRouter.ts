@@ -1,13 +1,16 @@
-// src/routes/authRoutes.ts
 import { Router } from 'express';
-import { googleAuth, googleAuthCallback, logout, deleteUser } from '../controllers/authController';
-import { authenticateJWT } from '../middlewares/authMiddleware';
+import { googleAuth, googleAuthCallback, refreshToken } from '@_controllers/authController';
 
 const router = Router();
 
-router.get('/auth/google', googleAuth); // Google 인증 시작
-router.get('/auth/google/callback', googleAuthCallback); // Google 인증 콜백 처리
-router.post('/logout', logout); // 로그아웃
-router.delete('/delete', authenticateJWT, deleteUser); // 사용자 삭제 (JWT 인증 필요)
+// Google 로그인 라우트
+router.get('/google', googleAuth);
+
+// Google 로그인 콜백 라우트
+router.get('/google/callback', googleAuthCallback);
+
+// 리프레시 토큰을 이용한 엑세스 토큰 갱신
+router.post('/refresh-token', refreshToken);
+
 
 export default router;

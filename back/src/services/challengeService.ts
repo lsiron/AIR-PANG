@@ -1,6 +1,6 @@
 import connection from '@_config/db.config';
-import { RowDataPacket, ResultSetHeader } from 'mysql2';
-import { Task, Challenge, CreateChallengeInput, UpdateChallengeInput, mapRowToChallenge, mapRowToTask } from '@_types/challenge';
+import { Task, Challenge, CreateChallengeInput, UpdateChallengeInput} from '@_types/challenge';
+import { ResultSetHeader } from 'mysql2';
 
 // 모든 챌린지 가져오기
 export const getAllChallenges = async (searchQuery: string): Promise<Challenge[]> => {
@@ -9,8 +9,8 @@ export const getAllChallenges = async (searchQuery: string): Promise<Challenge[]
     FROM challenges c 
     JOIN users u ON c.user_id = u.id 
     WHERE c.title LIKE ?`;
-  const [rows] = await connection.promise().query<RowDataPacket[]>(query, [`%${searchQuery}%`]);
-  return rows.map(mapRowToChallenge);  // 간단하게 매핑
+  const [rows] = await connection.promise().query<Challenge[]>(query, [`%${searchQuery}%`]);
+  return rows;
 };
 
 // 특정 챌린지 가져오기
@@ -20,21 +20,20 @@ export const getChallengeById = async (id: string): Promise<{ challenge: Challen
     FROM challenges c 
     JOIN users u ON c.user_id = u.id 
     WHERE c.id = ?`;
-  const [challengeRows] = await connection.promise().query<RowDataPacket[]>(query, [id]);
+  const [challengeRows] = await connection.promise().query<Challenge[]>(query, [id]);
 
   if (challengeRows.length === 0) {
     throw new Error('챌린지가 없습니다.');
   }
 
-  const challenge = mapRowToChallenge(challengeRows[0]);
+  const challenge = challengeRows[0];
 
-  const [taskRows] = await connection.promise().query<RowDataPacket[]>(
+  const [taskRows] = await connection.promise().query<Task[]>(
     `SELECT * FROM tasks WHERE challenge_id = ?`,
     [id]
   );
 
-  const tasks = taskRows.map(mapRowToTask);
-  return { challenge, tasks };
+  return { challenge, tasks: taskRows };
 };
 
 // 챌린지 생성하기
@@ -46,20 +45,19 @@ export const createChallenge = async (userId: number, { title, description, star
   const challengeId = result.insertId;
 
   const taskQueries = tasks.map(task =>
-    connection.promise().query<ResultSetHeader>(
+    connection.promise().query<Task[]>(
       `INSERT INTO tasks (challenge_id, description, is_completed) VALUES (?, ?, ?)`,
       [challengeId, task.description, task.is_completed]
     )
   );
   await Promise.all(taskQueries);
 
-  const [createdChallengeRows] = await connection.promise().query<RowDataPacket[]>(`SELECT * FROM challenges WHERE id = ?`, [challengeId]);
-  const createdChallenge = mapRowToChallenge(createdChallengeRows[0]);
+  const [createdChallengeRows] = await connection.promise().query<Challenge[]>(`SELECT * FROM challenges WHERE id = ?`, [challengeId]);
+  const createdChallenge = createdChallengeRows[0];
 
-  const [createdTaskRows] = await connection.promise().query<RowDataPacket[]>(`SELECT * FROM tasks WHERE challenge_id = ?`, [challengeId]);
-  const createdTasks = createdTaskRows.map(mapRowToTask);
+  const [createdTaskRows] = await connection.promise().query<Task[]>(`SELECT * FROM tasks WHERE challenge_id = ?`, [challengeId]);
 
-  return { challenge: createdChallenge, tasks: createdTasks };
+  return { challenge: createdChallenge, tasks: createdTaskRows };
 };
 
 // 챌린지 수정하기
@@ -69,8 +67,8 @@ export const updateChallenge = async (id: string, { title, description, start_da
     [title, description, start_date, end_date, id]
   );
 
-  const [updatedChallengeRows] = await connection.promise().query<RowDataPacket[]>(`SELECT * FROM challenges WHERE id = ?`, [id]);
-  const updatedChallenge = mapRowToChallenge(updatedChallengeRows[0]);
+  const [updatedChallengeRows] = await connection.promise().query<Challenge[]>(`SELECT * FROM challenges WHERE id = ?`, [id]);
+  const updatedChallenge = updatedChallengeRows[0];
 
   return updatedChallenge;
 };

@@ -1,9 +1,7 @@
-// src/middlewares/authMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { config } from '../config/env.config';
-import { UserService } from '../services/authService';
-import { User } from '../types/user';
+import { config } from '@_config/env.config';
+import { UserService } from '@_services/authService';
 
 const userService = new UserService();
 const jwtSecret = config.JWT_SECRET;
@@ -29,32 +27,51 @@ const verifyToken = (token: string, secret: string): Promise<JwtPayload> => {
 
 export const authenticateJWT = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.jwt;
-
+  
+  console.log('Incoming request:', req.method, req.originalUrl);
+  console.log('Cookies:', req.cookies);
+  
   if (token) {
+    console.log('Token found in cookies:', token);
     try {
       const decoded = await verifyToken(token, jwtSecret);
+      console.log('Token verified, decoded payload:', decoded);
 
       if (decoded) {
         try {
           const user = await userService.findUserById(decoded.id);
+          console.log('User retrieved from database:', user);
+
           if (user) {
-            req.user = user; // 사용자 정보를 req.user에 설정
-            next(); // 요청을 다음 미들웨어로 전달
+            req.user = user;
+            next();
           } else {
-            res.sendStatus(403);
+            console.error('User not found for ID:', decoded.id);
+            res.sendStatus(403); // Forbidden
           }
         } catch (error) {
           console.error('User Retrieval Error:', error);
-          res.sendStatus(403);
+          res.sendStatus(403); // Forbidden
         }
       } else {
-        res.sendStatus(403);
+        console.error('Token payload is invalid or missing ID');
+        res.sendStatus(403); // Forbidden
       }
     } catch (err) {
-      console.error('JWT Verification Error:', err);
-      res.sendStatus(403);
+      // 타입 가드 사용
+      if (err instanceof Error) {
+        if (err.name === 'TokenExpiredError') {
+          console.error('TokenExpiredError:', err.message);
+          return res.status(401).json({ message: 'TokenExpiredError: jwt expired' });
+        }
+        console.error('JWT Verification Error:', err.message);
+      } else {
+        console.error('Unknown Error:', err);
+      }
+      res.sendStatus(403); 
     }
   } else {
-    res.sendStatus(401);
+    console.log('No token found in cookies');
+    res.sendStatus(401); 
   }
 };
