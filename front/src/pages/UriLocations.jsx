@@ -24,7 +24,7 @@ function UriLocations() {
       >
         <MapChart />
       </div>
-      <div
+      {/* <div
         style={{
           display: "flex",
           justifyContent: "center",
@@ -34,10 +34,10 @@ function UriLocations() {
         <a href="http://localhost:3000/weather">날씨</a>
         <LocationSelector />
         
-        {/* <Locations /> */}
-        {/* <LocationDetail /> */}
-        {/* <LocationPage /> */}
-      </div>
+        <Locations />
+        <LocationDetail />
+        <LocationPage />
+      </div> */}
     </div>
   );
 }

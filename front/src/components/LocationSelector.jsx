@@ -1,71 +1,113 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-function LocationSelector() {
-  const [locations, setLocations] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedSubLocation, setSelectedSubLocation] = useState('');
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-  useEffect(() => {
-    fetchLocations();
-  }, []);
+const LocationSelector = () => {
+    const [locations, setLocations] = useState([]);
+    const [selectedLocation, setSelectedLocation] = useState('');
+    const [selectedSubLocation, setSelectedSubLocation] = useState('');
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  const fetchLocations = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/locations/detail');
-      setLocations(response.data.locations);
-    } catch (error) {
-      console.error('Error fetching locations:', error);
-    }
-  };
+    useEffect(() => {
+        fetchLocations();
+    }, []);
 
-  const handleLocationChange = (event) => {
-    setSelectedLocation(event.target.value);
-    setSelectedSubLocation('');
-  };
+    const fetchLocations = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/locations/detail');
+            setLocations(response.data.locations || []);
+            setLoading(false);
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+        }
+    };
 
-  const handleSubLocationChange = (event) => {
-    setSelectedSubLocation(event.target.value);
-  };
+    useEffect(() => {
+        if (selectedLocation && selectedSubLocation) {
+            fetchAqiData();
+        }
+    }, [selectedLocation, selectedSubLocation]);
 
-  const handleMove = () => {
-    if (selectedLocation && selectedSubLocation) {
-      const url = `http://localhost:8080/locations/detail?location=${selectedLocation}&subLocation=${selectedSubLocation}`;
-      window.location.href = url;
-    } else {
-      alert('주요도시와 상세도시를 모두 선택해주세요.');
-    }
-  };
+    const fetchAqiData = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('http://localhost:8080/locations/detail', {
+                params: {
+                    location: selectedLocation,
+                    subLocation: selectedSubLocation
+                }
+            });
+            setData(response.data);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const getUniqueLocations = () => {
-    return [...new Set(locations.map(loc => loc.address_a_name))];
-  };
+    const handleLocationChange = (event) => {
+        setSelectedLocation(event.target.value);
+        setSelectedSubLocation('');
+    };
 
-  const getSubLocations = (location) => {
-    return locations
-      .filter(loc => loc.address_a_name === location)
-      .map(loc => loc.address_b_name);
-  };
+    const handleSubLocationChange = (event) => {
+        setSelectedSubLocation(event.target.value);
+    };
 
-  return (
-    <div>
-      <select value={selectedLocation} onChange={handleLocationChange}>
-        <option value="">주요도시 선택</option>
-        {getUniqueLocations().map(location => (
-          <option key={location} value={location}>{location}</option>
-        ))}
-      </select>
+    const getUniqueLocations = () => {
+        return [...new Set(locations.map(loc => loc.address_a_name))];
+    };
 
-      <select value={selectedSubLocation} onChange={handleSubLocationChange} disabled={!selectedLocation}>
-        <option value="">상세도시 선택</option>
-        {selectedLocation && getSubLocations(selectedLocation).map(subLocation => (
-          <option key={subLocation} value={subLocation}>{subLocation}</option>
-        ))}
-      </select>
+    const getSubLocations = (location) => {
+        return locations
+            .filter(loc => loc.address_a_name === location)
+            .map(loc => loc.address_b_name);
+    };
 
-      <button onClick={handleMove}>이동</button>
-    </div>
-  );
-}
+    if (loading && !selectedLocation) return <p>Loading locations...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+
+    return (
+        <div>
+            <select value={selectedLocation} onChange={handleLocationChange}>
+                <option value="">주요도시 선택</option>
+                {getUniqueLocations().map(location => (
+                    <option key={location} value={location}>{location}</option>
+                ))}
+            </select>
+
+            <select value={selectedSubLocation} onChange={handleSubLocationChange} disabled={!selectedLocation}>
+                <option value="">상세도시 선택</option>
+                {selectedLocation && getSubLocations(selectedLocation).map(subLocation => (
+                    <option key={subLocation} value={subLocation}>{subLocation}</option>
+                ))}
+            </select>
+
+            {loading && selectedLocation && selectedSubLocation && <p>Loading data...</p>}
+
+            {!selectedLocation || !selectedSubLocation ? (
+                <p>위치를 선택해주세요.</p>
+            ) : data && data.monthly_aqi ? (
+                <Line
+                    data={{
+                        labels: data.monthly_aqi.map(item => item.month),
+                        datasets: [{
+                            label: 'Monthly AQI',
+                            data: data.monthly_aqi.map(item => item.aqi),
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    }}
+                />
+            ) : null}
+        </div>
+    );
+};
 
 export default LocationSelector;
