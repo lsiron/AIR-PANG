@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/ChallengeList.css';
 
+axios.defaults.withCredentials = true;
+
 function ChallengeList() {
   const [challenges, setChallenges] = useState([]);
   const [search, setSearch] = useState('');
@@ -40,7 +42,7 @@ function ChallengeList() {
     if (!localStorage.getItem('challenges')) {
       localStorage.setItem("challenges", JSON.stringify([{
         "id": 1,
-        "user_id": 1,
+        "challenge_id": 1,
         "title": "친환경 생활 실천",
         "description": "일주일 동안 플라스틱 사용 줄이기",
         "start_date": "2024-07-01",
@@ -48,7 +50,7 @@ function ChallengeList() {
         "tasks": [
           {
             "description": "분리수거 하기",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "description": "포장하기",
@@ -57,7 +59,7 @@ function ChallengeList() {
         ]
       }, {
         "id": 2,
-        "user_id": 1,
+        "challenge_id": 1,
         "title": "대중교통 이용",
         "description": "자가 대신 대중교통 이용하기",
         "start_date": "2024-08-01",
@@ -65,10 +67,14 @@ function ChallengeList() {
         "tasks": [
           {
             "description": "버스 타기",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "description": "지하철 타기",
+            "is_completed": false
+          },
+          {
+            "description": "자전거 타기",
             "is_completed": false
           }
         ]

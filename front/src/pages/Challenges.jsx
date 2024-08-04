@@ -1,11 +1,12 @@
-import React from 'react';
+import React from "react";
 import { Route, Routes } from 'react-router-dom';
-import ChallengeDetail from '../components/Challenges/ChallengeDetail';
-import ChallengeCreate from '../components/Challenges/ChallengeCreate';
-import ChallengeEdit from '../components/Challenges/ChallengeEdit';
-import ChallengeList from '../components/Challenges/ChallengeList';
+import ChallengeList from "../components/Challenges/ChallengeList";
+import ChallengeCreate from "../components/Challenges/ChallengeCreate";
+import ChallengeDetail from "../components/Challenges/ChallengeDetail";
+import ChallengeEdit from "../components/Challenges/ChallengeEdit";
 
-const Challenges = () => {
+
+function Challenges() {
   return (
     <div>
       <Routes>
@@ -16,6 +17,6 @@ const Challenges = () => {
       </Routes>
     </div>
   );
-};
+}
 
 export default Challenges;

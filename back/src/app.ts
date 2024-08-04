@@ -1,35 +1,55 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { authenticateJWT } from '@_middlewares/authMiddleware'; // JWT 인증 미들웨어 가져오기
-import routes from '@_routes/index'; // 라우트 가져오기
-import startCronJob from '@_scripts/updateData'; // Cron job 가져오기
+import session from 'express-session';
 import dotenv from 'dotenv';
+import passport from 'passport';
+import routes from '@_routes/index';
+import startCronJob from '@_scripts/updateData';
+import '@_config/passport.config';
 
-// 환경 변수 설정
 dotenv.config();
 
 const app = express();
 
 // CORS 설정
 app.use(cors({
-  origin: process.env.CLIENT_URL, 
-  credentials: true // 쿠키 허용
+  origin: process.env.CLIENT_URL,
+  credentials: true 
 }));
 
-// JSON 바디 파서와 쿠키 파서 설정
 app.use(express.json());
 app.use(cookieParser());
 
-// JWT 인증 미들웨어를 원하는 라우트에 적용
-app.use('/api', authenticateJWT, routes); // 모든 /api 경로에 JWT 인증 미들웨어 적용
+// 세션 설정
+app.use(session({
+  secret: process.env.SESSION_SECRET || '',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // 개발 환경에서는 secure: false
+}));
 
-// 서버 시작 시 데이터 업데이트 및 크론 작업
+// Passport 초기화
+app.use(passport.initialize());
+app.use(passport.session());
+
+// 기본적인 로깅 미들웨어
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log('Cookies:', req.cookies);
+  console.log(`Request URL: ${req.url}`);
+  console.log(`Request Method: ${req.method}`);
+  next();
+});
+
+
+// 인증된 API 라우트
+app.use('/', routes);
+
 startCronJob();
 
-// 에러 핸들러 미들웨어 (필요에 따라 추가)
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
+// 에러 핸들러 미들웨어
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Server error:', err);
   res.status(500).send('Something broke!');
 });
 
