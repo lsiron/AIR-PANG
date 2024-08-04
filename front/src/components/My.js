@@ -32,7 +32,7 @@ const MyPage = () => {
   };
 
   return (
-    <div>
+    <div className="my-page">
       <h2>마이페이지</h2>
       <div className="myPage">
       <div className="my-favorite">
