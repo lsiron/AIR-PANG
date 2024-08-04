@@ -1,0 +1,50 @@
+* {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  color: #333;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+}
+
+.logo img {
+  height: 40px; /* 로고 크기를 조절하세요 */
+}
+
+.nav ul {
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav ul li {
+  margin-left: 1rem;
+}
+
+.nav ul li:last-child {
+  margin-left: 2rem; /* 로그아웃 버튼을 조금 더 떨어뜨립니다 */
+}
+
+.nav a,
+.nav button {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.nav button {
+  width: 100px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: lightgrey;
+  margin-left: 10px;
+}
