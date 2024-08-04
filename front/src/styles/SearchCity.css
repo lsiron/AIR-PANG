@@ -1,0 +1,83 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.search-my-city {
+  display: 0 auto;
+}
+
+.search-page-title {
+  font-size: 36px;
+  font-weight: 300;
+  text-align: center;
+  margin: 80px auto;
+}
+
+.search-container {
+  width: 400px;
+  margin: 0 auto;
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+
+input {
+  width: 100%;
+  padding: 20px 30px;
+  border-radius: 50px;
+  border: 1px solid lightgrey;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  width: 100px;
+  height: 44px;
+  position: relative;
+  margin-left: -110px;
+  background-color: #004aad;
+  color: white;
+  font-size: 15px;
+}
+
+button:hover {
+  background-color: #6ac9ff;
+}
+
+.search-container {
+  height: 500px;
+}
+
+.results-list,
+.suggestions-list {
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  min-height: 50px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 125px;
+  padding-top: 100px;
+  padding: 10px 20px;
+  list-style-type: none;
+  position: absolute;
+  width: 100%;
+  background: white;
+  z-index: 1000;
+}
+
+.results-list li,
+.suggestions-list li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.results-list li:hover,
+.suggestions-list li:hover,
+.results-list .highlighted,
+.suggestions-list .highlighted {
+  background-color: #fafafa;
+}
