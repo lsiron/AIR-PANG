@@ -12,87 +12,36 @@ function ChallengeDetail() {
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
 
-  //원본
-  //useEffect(() => {
-  //  fetch(`http://localhost:8080/challenges/${id}`)
-  //    .then(response => response.json())
-  //    .then(data => {
-  //      setChallenge(data.challenge);
-  //      setTasks(data.tasks);
-  //    })
-  //    .catch(error => console.error('Error fetching challenge:', error));
-  //}, [id]);
-
-  //Axios 사용
-  // useEffect(() => {
-  //  const fetchChallenge = async () => {
-  //    try {
-  //      const response = await axios.get(`http://localhost:8080/challenges/${id}`);
-  //      const data = response.data;
-  //      setChallenge(data.challenge);
-  //      setTasks(data.tasks);
-  //   } catch (error) {
-  //      console.error('Error fetching challenge:', error);
-  //    }
-  //  };
+  useEffect(() => {
+   const fetchChallenge = async () => {
+     try {
+       const response = await axios.get(`http://localhost:8080/challenges/${id}`, {
+        withCredentials: true // credentials 설정
+      });
+       const data = response.data;
+       setChallenge(data.challenge);
+       setTasks(data.tasks);
+    } catch (error) {
+       console.error('Error fetching challenge:', error);
+     }
+   };
   
-  //  fetchChallenge();
-  // }, [id]);
-
-  //로컬스토리지
-  useEffect(()=> {
-    const challenges = JSON.parse(localStorage.getItem('challenges'));
-    const selectedChallenge = challenges.find(challenge => challenge.id === parseInt(id));
-    const selectedTask = selectedChallenge.tasks;
-
-    if (selectedChallenge) {
-      setChallenge(selectedChallenge);
-      setTasks(selectedTask);
-      console.log(tasks);
-    }
+   fetchChallenge();
   }, [id]);
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm('챌린지를 삭제하시겠습니까?');
     if (confirmDelete) {
-      //원본
-      //try {
-      //  const response = await fetch(`http://localhost:8080/challenges/${id}`, {
-      //    method: 'DELETE',
-      //  });
-      //  if (response.ok) {
-      //    navigate('/challenges');
-      //  } else {
-      //    console.error('Error deleting challenge');
-      //  }
-      //} catch (error) {
-      //  console.error('Error deleting challenge:', error);
-      //}
-
-      //Axios 사용
-      // try {
-      //  const response = await axios.delete(`http://localhost:8080/challenges/${id}`);
-      
-      //  if (response.status === 200) {
-      //    navigate('/challenges');
-      //  } else {
-      //    console.error('Error deleting challenge');
-      //  }
-      // } catch (error) {
-      //  console.error('Error deleting challenge:', error);
-      // }
-
-      //로컬스토리지 사용
       try {
-        // 기존 데이터 가져오기
-        const storedChallenges = JSON.parse(localStorage.getItem('challenges')) || [];
-        const updatedChallenge = storedChallenges.filter(challenge => challenge.id !== parseInt(id));
-        // 업데이트된 데이터를 로컬스토리지에 저장
-        localStorage.setItem('challenges', JSON.stringify(updatedChallenge));
-        // 챌린지 페이지로 이동
-        navigate('/challenges');
+       const response = await axios.delete(`http://localhost:8080/challenges/${id}`);
+      
+       if (response.status === 204) {
+         navigate('/challenges');
+       } else {
+         console.error('Error deleting challenge');
+       }
       } catch (error) {
-        console.error('Error creating challenge:', error);
+       console.error('Error deleting challenge:', error);
       }
     }
   };

@@ -11,9 +11,9 @@ function Challenges() {
     <div>
       <Routes>
         <Route path="/" element={<ChallengeList />} />
-        <Route path="create" element={<ChallengeCreate />} />
-        <Route path=":id" element={<ChallengeDetail />} />
-        <Route path="edit/:id" element={<ChallengeEdit />} />
+        <Route path="/create" element={<ChallengeCreate />} />
+        <Route path="/:id" element={<ChallengeDetail />} />
+        <Route path="/edit/:id" element={<ChallengeEdit />} />
       </Routes>
     </div>
   );

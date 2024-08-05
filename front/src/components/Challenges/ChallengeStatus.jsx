@@ -4,8 +4,6 @@ import axios from 'axios';
 import ProgressBar from "@ramonak/react-progress-bar";
 import '../../styles/ChallengeStatus.css';
 
-axios.defaults.withCredentials = true;
-
 const ChallengeStatus = () => {
   const [challenges, setChallenges] = useState([]);
 
@@ -55,26 +53,28 @@ const ChallengeStatus = () => {
   }, []);
 
   // //Axios 사용
-  // const fetchChallenges = async () => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:8080/my`);
-  //     console.log(response.data);
-  //     setChallenges(response.data.Challeng_Status);
-  //   } catch (error) {
-  //     console.error('Error fetching challenges:', error);
-  //   }
-  //  };
-
-  //로컬스토리지 사용
   const fetchChallenges = async () => {
     try {
-      // 로컬 스토리지에서 데이터 가져오기
-      const cachedData = JSON.parse(localStorage.getItem('challenges'));
-      setChallenges(cachedData);
+      const response = await axios.get(`http://localhost:8080/my`, {
+        withCredentials: true // credentials 설정
+      });
+      console.log(response.data);
+      setChallenges(response.data.Challeng_Status);
     } catch (error) {
       console.error('Error fetching challenges:', error);
     }
-  };
+   };
+
+  //로컬스토리지 사용
+  // const fetchChallenges = async () => {
+  //   try {
+  //     // 로컬 스토리지에서 데이터 가져오기
+  //     const cachedData = JSON.parse(localStorage.getItem('challenges'));
+  //     setChallenges(cachedData);
+  //   } catch (error) {
+  //     console.error('Error fetching challenges:', error);
+  //   }
+  // };
 
   function calculateDaysLeft(start_date) {
     const today = new Date();
