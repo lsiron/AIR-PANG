@@ -13,10 +13,10 @@ const MyPage = () => {
   }, []);
 
   const handleViewWeather = (location) => {
-    navigate("/", {
+    navigate("/weather", {
       state: {
-        location: location.address_a_name,
-        subLocation: location.address_b_name,
+        locationName: location.address_a_name,
+        subLocationName: location.address_b_name,
       },
     });
   };
@@ -27,44 +27,40 @@ const MyPage = () => {
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
-  const handleAddFavorite = () => {
-    navigate("/search");
-  };
-
   return (
     <div className="my-page">
-      <h2>마이페이지</h2>
+      <h2 className="myPageTitle">마이페이지</h2>
       <div className="myPage">
-      <div className="my-favorite">
-        <ul>
-          {favorites.length > 0 ? (
-            favorites.map((location) => (
-              <li key={location.id}>
-                {location.address_a_name} {location.address_b_name}
-                <button
-                  className="delete-button"
-                  onClick={() => handleViewWeather(location)}
-                >
-                  보기
-                </button>
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(location.id)}
-                >
-                  X
-                </button>
-              </li>
-            ))
-          ) : (
-            <li>즐겨찾기 항목이 없습니다.</li>
-          )}
-        </ul>
+        <div className="my-favorite">
+          <ul>
+            {favorites.length > 0 ? (
+              favorites.map((location) => (
+                <li key={location.id}>
+                  {location.address_a_name} {location.address_b_name}
+                  <button
+                    className="delete-button"
+                    onClick={() => handleViewWeather(location)}
+                  >
+                    보기
+                  </button>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDelete(location.id)}
+                  >
+                    X
+                  </button>
+                </li>
+              ))
+              ) : (
+                <li>즐겨찾기 항목이 없습니다.</li>
+            )}
+          </ul>
 
-        <a href="/search" className="addFavorite">
-          관심지역 설정하기
-        </a>
-      </div>
-      <ChallengeStatus />
+          <a href="/search" className="addFavorite">
+            관심지역 설정하기
+          </a>
+        </div>
+        <ChallengeStatus />
       </div>
     </div>
   );
