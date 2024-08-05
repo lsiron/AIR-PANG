@@ -32,8 +32,8 @@ const Search = () => {
 
   const handleLocationChange = (e) => {
     setLocation(e.target.value);
-    setSubLocation(""); // Reset subLocation when location changes
-    setSubLocations([]); // Clear previous subLocations
+    setSubLocation("");
+    setSubLocations([]);
   };
 
   const handleSubLocationChange = (e) => {

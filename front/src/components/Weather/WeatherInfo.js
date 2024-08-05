@@ -23,12 +23,12 @@ const WeatherPage = () => {
       try {
         setLoading(true);
 
-        // Fetching favorite locations from localStorage
+        // 저장된 지역이름 가져오기
         const storedFavorites =
           JSON.parse(localStorage.getItem("favorites")) || [];
         setLocations(storedFavorites);
 
-        // If no locations in localStorage, use default location
+        // 즐겨찾기 없으면 기본지역으로 설정
         if (storedFavorites.length === 0) {
           const defaultData = await axios.get(
             "http://localhost:8080/locations/detail",
@@ -65,8 +65,15 @@ const WeatherPage = () => {
           }));
 
           setWeatherData(formattedData);
+          const initialSelected = formattedData.find(
+            ({ city }) =>
+              city ===
+              initialLocation.locationName +
+                ", " +
+                initialLocation.subLocationName
+          );
           setSelectedLocation(
-            formattedData.length > 0 ? formattedData[0].city : null
+            initialSelected ? initialSelected.city : formattedData[0].city
           );
         }
       } catch (err) {
@@ -78,13 +85,13 @@ const WeatherPage = () => {
     };
 
     fetchWeatherData();
-  }, []);
+  }, [initialLocation]);
 
   const handleLocationChange = (event) => {
     const newLocation = event.target.value;
     setSelectedLocation(newLocation);
 
-    // Set the selected location and fetch its data
+    // 선택된 지역 날씨정보 가져오기
     const locationData = weatherData.find(({ city }) => city === newLocation);
     if (locationData) {
       setSelectedLocation(locationData.city);
