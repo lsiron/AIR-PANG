@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/ChallengeCreate.css';
 
-axios.defaults.withCredentials = true;
-
 function ChallengeCreate() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -54,38 +52,12 @@ function ChallengeCreate() {
       tasks: filteredTasks.map(task => ({ description: task, is_completed: false })),
     };
 
-    //로컬스토리지 전용 newChallenge
-    // const storedChallenges = JSON.parse(localStorage.getItem('challenges')) || [];
-    // const maxId = storedChallenges.length > 0 ? Math.max(...storedChallenges.map(challenge => challenge.id)) : 0;
-    // const newId = maxId + 1;
-    // const newChallengeWithId = {...newChallenge, id: newId};
-
-    //원본
-    //try {
-    //  const response = await fetch('http://localhost:8080/challenges', {
-    //    method: 'POST',
-    //    headers: {
-    //      'Content-Type': 'application/json',
-    //    },
-    //    body: JSON.stringify(newChallenge),
-    //  });
-    //
-    //  if (response.ok) {
-    //    navigate('/challenges');
-    //  } else {
-    //    console.error('Error creating challenge');
-    //  }
-    //} catch (error) {
-    //  console.error('Error creating challenge:', error);
-    //}
-
-    //Axios 사용
     try {
      const response = await axios.post('http://localhost:8080/challenges', newChallenge, {
        headers: {
          'Content-Type': 'application/json',
-       },
-       withCredentials: true
+          withCredentials: true // credentials 설정
+       }
      });
     
      if (response.status === 200 || response.status === 201) {
@@ -96,23 +68,6 @@ function ChallengeCreate() {
     } catch (error) {
      console.error('Error creating challenge:', error);
     }
-
-    //로컬스토리지 사용
-    // try {
-    //   // 기존 데이터 가져오기
-    //   const storedChallenges = JSON.parse(localStorage.getItem('challenges')) || [];
-    //   // 새로운 데이터 추가
-    //   storedChallenges.push(newChallengeWithId);
-    //   // 업데이트된 데이터를 로컬스토리지에 저장
-    //   localStorage.setItem('challenges', JSON.stringify(storedChallenges));
-  
-    //   // 챌린지 페이지로 이동
-    //   navigate('/challenges');
-      
-    // } catch (error) {
-    //   console.error('Error creating challenge:', error);
-    // }
-    
   };
 
   const handleCancel = () => {
