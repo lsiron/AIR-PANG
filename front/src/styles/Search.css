@@ -1,3 +1,7 @@
+form {
+  margin-bottom: 30px;
+}
+
 .search-field {
   width: 77%;
   padding: 10px;
@@ -18,4 +22,15 @@
   border: 1px solid #004aad;
   border-radius: 4px;
   font-size: 16px;
+}
+
+.search_result {
+  background: white;
+  width: 400px;
+  margin-top: 10px;
+  position: absolute;
+}
+
+.search_result::-webkit-scrollbar {
+  display: none;
 }
