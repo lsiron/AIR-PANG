@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ChallengeStatus from './Challenges/ChallengeStatus'
 import "../styles/My.css";
 
 const MyPage = () => {
@@ -31,8 +32,9 @@ const MyPage = () => {
   };
 
   return (
-    <div>
+    <div className="my-page">
       <h2>마이페이지</h2>
+      <div className="myPage">
       <div className="my-favorite">
         <ul>
           {favorites.length > 0 ? (
@@ -61,6 +63,8 @@ const MyPage = () => {
         <a href="/search" className="addFavorite">
           관심지역 설정하기
         </a>
+      </div>
+      <ChallengeStatus />
       </div>
     </div>
   );

@@ -35,9 +35,9 @@ app.use(passport.session());
 
 // 기본적인 로깅 미들웨어
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log('Cookies:', req.cookies);
-  console.log(`Request URL: ${req.url}`);
-  console.log(`Request Method: ${req.method}`);
+  // console.log('Cookies:', req.cookies);
+  // console.log(`Request URL: ${req.url}`);
+  // console.log(`Request Method: ${req.method}`);
   next();
 });
 
