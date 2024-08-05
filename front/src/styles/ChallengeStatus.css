@@ -1,5 +1,6 @@
 .ChallengeStatus {
     padding: 16px;
+    
     height: 500px;
     border-radius: 20px;
     display: flex;
@@ -9,18 +10,41 @@
     gap: 24px;
 
     background-color: #FAFAFA;
+
+    
 }
 
 .StatusLists {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 24px;
+
+    width: 800px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.StatusLists::-webkit-scrollbar {
+    height: 12px; /* 스크롤 막대의 너비 */
+}
+
+.StatusLists::-webkit-scrollbar-thumb {
+    /* 스크롤바의 색상 */
+    background: #00a2ff7e;
+    border-radius: 10px;
+}
+  
+.StatusLists::-webkit-scrollbar-track {
+    /*스크롤바 뒷 배경 색상*/
+    background: #EDEDED;
+    border-radius: 10px;
 }
 
 .StatusList {
-    width: 180px;
-    height: 340px;
+    flex: 0 0 180px;
+    height: 348px;
     border-radius: 8px;
     padding-top: 20px;
     display: flex;
