@@ -75,9 +75,9 @@ function ChallengeEdit() {
     try {
       const response = await axios.patch(`http://localhost:8080/challenges/${id}`, updatedChallenge, {
         headers: {
-          'Content-Type': 'application/json',
-          withCredentials: true
+          'Content-Type': 'application/json'
         },
+        withCredentials: true
       });
 
       if (response.status === 204) {
@@ -85,16 +85,16 @@ function ChallengeEdit() {
           if (task.id) {
             await axios.patch(`http://localhost:8080/tasks/${task.id}`, task, {
               headers: {
-                'Content-Type': 'application/json',
-                withCredentials: true
-              }
+                'Content-Type': 'application/json'
+              },
+              withCredentials: true
             });
           } else {
             await axios.post(`http://localhost:8080/tasks`, { challenge_id: id, description: task.description }, {
               headers: {
-                'Content-Type': 'application/json',
-                withCredentials: true
-              }
+                'Content-Type': 'application/json'
+              },
+              withCredentials: true
             });
           }
         }));

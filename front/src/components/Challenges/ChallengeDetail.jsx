@@ -70,8 +70,15 @@ function ChallengeDetail() {
     return <p>Loading...</p>;
   }
 
-  const count = tasks.length;
-  const completedCount = tasks.filter(task => task.is_completed).length;
+  let count = tasks.length;
+  let completedCount = tasks.filter(task => task.is_completed).length;
+  let label = Math.round(completedCount/count*100);
+
+  if (completedCount === 0) {
+    completedCount = 1;
+    count = 18;
+    label = 0;
+  }
 
   const isOwner = currentUser && challenge.user_id === currentUser.id;
 
@@ -110,11 +117,11 @@ function ChallengeDetail() {
       )}
       
       <div className="progress">
-        <p>달성률</p>
+        <p>{challenge.user_name}님의 달성률</p>
         <ProgressBar
           completed={completedCount}
           maxCompleted={count}
-          customLabel={`${Math.round(completedCount / count * 100)}%`}
+          customLabel={`${label}%`}
           width="500px"
           height='16px'
           baseBgColor='#EDEDED'

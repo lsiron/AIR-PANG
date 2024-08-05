@@ -56,7 +56,7 @@ const ChallengeStatus = () => {
   const fetchChallenges = async () => {
     try {
       const response = await axios.get(`http://localhost:8080/my`, {
-        withCredentials: true // credentials 설정
+        withCredentials: true
       });
       setChallenges(response.data.challenges);
 
@@ -126,9 +126,9 @@ const ChallengeStatus = () => {
         console.log(task) 
         await axios.patch(`http://localhost:8080/tasks/${task.id}`, task, {
           headers: {
-            'Content-Type': 'application/json',
-            withCredentials: true
-          }
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
           });
              
       }));

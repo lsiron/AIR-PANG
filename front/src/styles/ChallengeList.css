@@ -101,11 +101,8 @@ a {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-<<<<<<< HEAD
   gap: 20px;
-=======
-  gap: 24px;
->>>>>>> e16f0de3e69427fab2df2aa3f371a9026f13d7cb
+
 }
 
 .ChallengeList .createChallenge {
@@ -158,14 +155,6 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-<<<<<<< HEAD
-=======
-  margin-top: 20px;
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
->>>>>>> e16f0de3e69427fab2df2aa3f371a9026f13d7cb
 }
 
 .pagination-button {
