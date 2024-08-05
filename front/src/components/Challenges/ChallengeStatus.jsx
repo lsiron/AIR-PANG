@@ -59,6 +59,7 @@ const ChallengeStatus = () => {
         withCredentials: true // credentials 설정
       });
       setChallenges(response.data.challenges);
+
     } catch (error) {
       console.error('Error fetching challenges:', error);
     }
