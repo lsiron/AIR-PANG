@@ -3,84 +3,27 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/ChallengeList.css';
 
-axios.defaults.withCredentials = true;
-
 function ChallengeList() {
   const [challenges, setChallenges] = useState([]);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 4;
 
-  //원본
-  //const fetchChallenges = (searchQuery = '') => {
-  //  fetch(`http://localhost:8080/challenges?search=${searchQuery}`)
-  //    .then(response => response.json())
-  //    .then(data => setChallenges(data.challenges))
-  //    .catch(error => console.error('Error fetching challenges:', error));
-  //};
-
-  // //Axios 사용
-  // const fetchChallenges = async (searchQuery = '') => {
-  //  try {
-  //    const response = await axios.get(`http://localhost:8080/challenges?search=${searchQuery}`);
-  //    setChallenges(response.data.challenges);
-  //  } catch (error) {
-  //    console.error('Error fetching challenges:', error);
-  //  }
-  // };
-
-  //로컬스토리지 사용
-  const fetchChallenges = async () => {
+  const fetchChallenges = async (searchQuery = '', page = 1) => {
     try {
-      // 로컬 스토리지에서 데이터 가져오기
-      const cachedData = JSON.parse(localStorage.getItem('challenges'));
-      setChallenges(cachedData);
+      const response = await axios.get(`http://localhost:8080/challenges?search=${searchQuery}&page=${page}&limit=${itemsPerPage}`, {
+        withCredentials: true // credentials 설정
+      });
+      setChallenges(response.data.challenges);
+      setTotalPages(Math.ceil(response.data.total / itemsPerPage));
     } catch (error) {
       console.error('Error fetching challenges:', error);
     }
   };
-  
+
   useEffect(() => {
-    if (!localStorage.getItem('challenges')) {
-      localStorage.setItem("challenges", JSON.stringify([{
-        "id": 1,
-        "challenge_id": 1,
-        "title": "친환경 생활 실천",
-        "description": "일주일 동안 플라스틱 사용 줄이기",
-        "start_date": "2024-07-01",
-        "end_date": "2024-08-01",
-        "tasks": [
-          {
-            "description": "분리수거 하기",
-            "is_completed": true
-          },
-          {
-            "description": "포장하기",
-            "is_completed": false
-          }
-        ]
-      }, {
-        "id": 2,
-        "challenge_id": 1,
-        "title": "대중교통 이용",
-        "description": "자가 대신 대중교통 이용하기",
-        "start_date": "2024-08-01",
-        "end_date": "2024-09-01",
-        "tasks": [
-          {
-            "description": "버스 타기",
-            "is_completed": true
-          },
-          {
-            "description": "지하철 타기",
-            "is_completed": false
-          },
-          {
-            "description": "자전거 타기",
-            "is_completed": false
-          }
-        ]
-      }]));
-   } //중요!! 로컬스토리지에 챌린지 하나 만들어두기
-   fetchChallenges(); // 페이지 로드 시 모든 챌린지 불러오기
+    fetchChallenges(); // 페이지 로드 시 모든 챌린지 불러오기
   }, []);
 
   const handleSearchChange = (e) => {
@@ -89,7 +32,13 @@ function ChallengeList() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    fetchChallenges(search); // 검색어에 맞는 챌린지 리스트 불러오기
+    fetchChallenges(search, 1); // 검색어에 맞는 챌린지 리스트 불러오기
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchChallenges(search, page);
   };
 
   const formatDate = (dateString) => {
@@ -104,6 +53,32 @@ function ChallengeList() {
     const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
     return daysLeft;
   }
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPageButtons = 5;
+    let startPage = Math.max(currentPage - Math.floor(maxPageButtons / 2), 1);
+    let endPage = startPage + maxPageButtons - 1;
+
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(endPage - maxPageButtons + 1, 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          className={`pageButton ${i === currentPage ? 'active' : ''}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <div className="ChallengeList">
@@ -134,12 +109,29 @@ function ChallengeList() {
                     )
                 }
               </span>
-              <h3>{challenge.title}</h3>
+              <h3>{challenge.user_name}님의 챌린지: {challenge.title}</h3>
               <p>{formatDate(challenge.start_date)} ~ {formatDate(challenge.end_date)}</p>
             </Link>
           </li>
         ))}
       </ul>
+      <div className="pagination">
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          이전
+        </button>
+        {renderPageNumbers()}
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          다음
+        </button>
+      </div>
     </div>
   );
 }

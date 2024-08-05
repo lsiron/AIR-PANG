@@ -28,19 +28,19 @@ const verifyToken = (token: string, secret: string): Promise<JwtPayload> => {
 export const authenticateJWT = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.jwt;
   
-  console.log('Incoming request:', req.method, req.originalUrl);
-  console.log('Cookies:', req.cookies);
+  // console.log('Incoming request:', req.method, req.originalUrl);
+  // console.log('Cookies:', req.cookies);
   
   if (token) {
-    console.log('Token found in cookies:', token);
+    // console.log('Token found in cookies:', token);
     try {
       const decoded = await verifyToken(token, jwtSecret);
-      console.log('Token verified, decoded payload:', decoded);
+      // console.log('Token verified, decoded payload:', decoded);
 
       if (decoded) {
         try {
           const user = await userService.findUserById(decoded.id);
-          console.log('User retrieved from database:', user);
+          // console.log('User retrieved from database:', user);
 
           if (user) {
             req.user = user;

@@ -31,7 +31,7 @@ export const googleAuthCallback = (req: Request, res: Response) => {
 
     const userObj = user as User;
     try {
-      const accessToken = jwt.sign({ id: userObj.id }, config.JWT_SECRET, { expiresIn: '15m' });
+      const accessToken = jwt.sign({ id: userObj.id }, config.JWT_SECRET, { expiresIn: '24h' });
       const refreshToken = jwt.sign({ id: userObj.id }, config.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
       await userService.saveRefreshToken(userObj.id, refreshToken);

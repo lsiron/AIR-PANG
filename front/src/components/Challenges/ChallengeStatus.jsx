@@ -4,8 +4,6 @@ import axios from 'axios';
 import ProgressBar from "@ramonak/react-progress-bar";
 import '../../styles/ChallengeStatus.css';
 
-axios.defaults.withCredentials = true;
-
 const ChallengeStatus = () => {
   const [challenges, setChallenges] = useState([]);
 
@@ -55,26 +53,27 @@ const ChallengeStatus = () => {
   }, []);
 
   // //Axios 사용
-  // const fetchChallenges = async () => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:8080/my`);
-  //     console.log(response.data);
-  //     setChallenges(response.data.Challeng_Status);
-  //   } catch (error) {
-  //     console.error('Error fetching challenges:', error);
-  //   }
-  //  };
-
-  //로컬스토리지 사용
   const fetchChallenges = async () => {
     try {
-      // 로컬 스토리지에서 데이터 가져오기
-      const cachedData = JSON.parse(localStorage.getItem('challenges'));
-      setChallenges(cachedData);
+      const response = await axios.get(`http://localhost:8080/my`, {
+        withCredentials: true // credentials 설정
+      });
+      setChallenges(response.data.challenges);
     } catch (error) {
       console.error('Error fetching challenges:', error);
     }
-  };
+   };
+
+  //로컬스토리지 사용
+  // const fetchChallenges = async () => {
+  //   try {
+  //     // 로컬 스토리지에서 데이터 가져오기
+  //     const cachedData = JSON.parse(localStorage.getItem('challenges'));
+  //     setChallenges(cachedData);
+  //   } catch (error) {
+  //     console.error('Error fetching challenges:', error);
+  //   }
+  // };
 
   function calculateDaysLeft(start_date) {
     const today = new Date();
@@ -84,21 +83,58 @@ const ChallengeStatus = () => {
     return daysLeft;
   }
 
-  const handleTaskCompletionToggle = (challengeId, taskIndex) => {
+  //로컬스토리지 사용
+  // const handleTaskCompletionToggle = (challengeId, taskIndex) => {
+  //   const updatedChallenges = challenges.map(challenge => {
+  //     if (challenge.id === challengeId) {
+  //       const updatedTasks = challenge.tasks.map((task, index) => {
+  //         if (index === taskIndex) {
+  //           return { ...task, is_completed: !task.is_completed };
+  //         }
+  //         return task;
+  //       });
+  //       return { ...challenge, tasks: updatedTasks };
+  //     }
+  //     return challenge;
+  //   });
+  //   setChallenges(updatedChallenges);
+  //   localStorage.setItem('challenges', JSON.stringify(updatedChallenges));
+  // };
+
+  //Axios 사용
+  const handleTaskCompletionToggle = async (challengeId, taskId) => {
     const updatedChallenges = challenges.map(challenge => {
-      if (challenge.id === challengeId) {
-        const updatedTasks = challenge.tasks.map((task, index) => {
-          if (index === taskIndex) {
-            return { ...task, is_completed: !task.is_completed };
-          }
-          return task;
-        });
-        return { ...challenge, tasks: updatedTasks };
-      }
-      return challenge;
+        if (challenge.id === challengeId) {
+            return {
+                ...challenge,
+                tasks: challenge.tasks.map(task =>
+                    task.id === taskId ? { ...task, is_completed: !task.is_completed } : task
+                )
+            };
+        }
+        return challenge;
     });
+
     setChallenges(updatedChallenges);
-    localStorage.setItem('challenges', JSON.stringify(updatedChallenges));
+    
+
+    // 서버에 PATCH 요청 보내기
+    const updatedChallenge = updatedChallenges.find(challenge => challenge.id === challengeId);
+    try {
+      await Promise.all(updatedChallenge.tasks.map(async task => {
+        console.log(task) 
+        await axios.patch(`http://localhost:8080/tasks/${task.id}`, task, {
+          headers: {
+            'Content-Type': 'application/json',
+            withCredentials: true
+          }
+          });
+             
+      }));
+    } catch (error) {
+        console.error('Failed to update task status on server:', error);
+    }
+    console.log(updatedChallenges);
   };
 
   return (
@@ -106,8 +142,15 @@ const ChallengeStatus = () => {
       <h1>나의 챌린지 현황</h1>
       <div className='StatusLists'>
         {challenges.map(challenge => {
-          const count = challenge.tasks.length;
-          const completedCount = challenge.tasks.filter(task => task.is_completed).length;
+          let count = challenge.tasks.length;
+          let completedCount = challenge.tasks.filter(task => task.is_completed).length;
+          let label = Math.round(completedCount/count*100);
+
+          if (completedCount === 0) {
+           completedCount = 1;
+           count = 8;
+           label = 0;
+          }
 
           return (
             <div className='StatusList' key={challenge.id}>
@@ -125,12 +168,13 @@ const ChallengeStatus = () => {
               <ProgressBar
                 completed={completedCount}
                 maxCompleted={count}
-                customLabel={`${Math.round(completedCount/count*100)}%`}
+                customLabel={`${label}%`}
                 width="148px"
                 height='16px'
-                baseBgColor='#EDEDED'
+                baseBgColor='#D9D9D9'
                 bgColor='linear-gradient(to right, #CDEDFF, #00A3FF)'
                 labelSize="10px"
+                labelAlignment="right"
               />
               <ul>
                 {challenge.tasks.map((task, index) => (
@@ -139,7 +183,7 @@ const ChallengeStatus = () => {
                       <input
                         type="checkbox"
                         checked={task.is_completed}
-                        onChange={() => handleTaskCompletionToggle(challenge.id, index)}
+                        onChange={() => handleTaskCompletionToggle(challenge.id, task.id)}
                       /> {task.description}
                     </label>
                   </li>
