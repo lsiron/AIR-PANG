@@ -1,86 +1,97 @@
-// src/pages/WeatherLanding.js
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useLocation } from "react-router-dom";
 import "../../styles/WeatherLanding.css";
+import axios from "axios";
 import pang from "../../assets/images/pang.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import GoogleLoginButton from "../../components/Landing/GoogleLoginButton";
+const apiUrl = process.env.REACT_APP_API_URL;
 
-const WeatherLanding = () => {
-  const [weatherData, setWeatherData] = useState({});
-  const [currentTab, setCurrentTab] = useState("");
+export default function WeatherLanding({ isLoggedIn }) {
+  const locationState = useLocation().state || {};
+  const [weatherData, setWeatherData] = useState(null);
+  const [locationError, setLocationError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState({
+    location: locationState.location || "서울",
+    subLocation: locationState.subLocation || "강남구",
+  });
 
   useEffect(() => {
-    const fetchFavorites = () => {
-      const storedFavorites =
-        JSON.parse(localStorage.getItem("favorites")) || [];
-      return storedFavorites.map(({ address_a_name, address_b_name }) => ({
-        location: address_a_name,
-        subLocation: address_b_name,
-      }));
-    };
-
-    const fetchData = async () => {
+    const fetchWeatherData = async () => {
       try {
-        setLoading(true);
-        const favorites = fetchFavorites();
-        const defaultLocation = { location: "서울", subLocation: "강남구" };
+        const response = await axios.get(`${apiUrl}/locations/detail`, {
+          params: {
+            location: currentLocation.location,
+            subLocation: currentLocation.subLocation,
+          },
+        });
 
-        const data = await Promise.all(
-          (favorites.length > 0 ? favorites : [defaultLocation]).map(
-            ({ location, subLocation }) =>
-              axios
-                .get("http://localhost:8080/locations/detail", {
-                  params: {
-                    location: location || "서울",
-                    subLocation: subLocation || "강남구",
-                  },
-                })
-                .then((response) => ({
-                  city: `${response.data.locations.address_a_name}, ${response.data.locations.address_b_name}`,
-                  airQuality: response.data.Realtime_Air_Quality,
-                }))
-          )
-        );
+        // Log the entire response and data
+        console.log("API Response:", response);
+        console.log("Response Data:", response.data);
 
-        const weatherData = data.reduce((acc, { city, airQuality }) => {
-          acc[city] = airQuality;
-          return acc;
-        }, {});
-
-        setWeatherData(weatherData);
-        setCurrentTab(Object.keys(weatherData)[0] || "");
+        setWeatherData({
+          city: `${response.data.locations.address_a_name}, ${response.data.locations.address_b_name}`,
+          airQuality: {
+            pm10: response.data.Realtime_Air_Quality.pm10,
+            pm25: response.data.Realtime_Air_Quality.pm25,
+            o3: response.data.Realtime_Air_Quality.o3,
+            no2: response.data.Realtime_Air_Quality.no2,
+            co: response.data.Realtime_Air_Quality.co,
+            so2: response.data.Realtime_Air_Quality.so2,
+            aqi: response.data.Realtime_Air_Quality.aqi,
+          },
+        });
+        setLocationError(null);
       } catch (err) {
-        console.error("Error fetching weather data:", err);
-        setError("Unable to fetch data.");
+        console.error(
+          "Error fetching weather data:",
+          err.response || err.message
+        );
+        if (
+          err.response &&
+          err.response.data.message ===
+            "주어진 지역의 월평균 데이터가 없습니다."
+        ) {
+          setLocationError(
+            "The monthly average data for the specified area is not available."
+          );
+        } else {
+          setLocationError("Unable to fetch data.");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchWeatherData();
+  }, [currentLocation]);
+
+  const handleLocationChange = (location, subLocation) => {
+    setCurrentLocation({ location, subLocation });
+    setLoading(true);
+  };
 
   if (loading) return <div className="weather-landing">Loading...</div>;
-  if (error) return <div className="weather-landing">{error}</div>;
+
+  if (locationError) {
+    return <div className="weather-landing">{locationError}</div>;
+  }
 
   return (
     <div className="weather-landing">
-      <div className="tabs">
-        {Object.keys(weatherData).map((city) => (
-          <button
-            key={city}
-            onClick={() => setCurrentTab(city)}
-            className={currentTab === city ? "active" : ""}
-          >
-            {city}
-          </button>
-        ))}
+      <div className="left">
+        <h1>
+          오늘의 공기
+          <br />
+          괜찮을까요?
+        </h1>
+        {!isLoggedIn && <GoogleLoginButton />}
       </div>
       <div className="weather-card">
-        {weatherData[currentTab] && (
+        {weatherData && (
           <>
             <div className="top-section">
               <h2>오늘의 공기정보</h2>
@@ -89,35 +100,35 @@ const WeatherLanding = () => {
                   icon={faLocationDot}
                   style={{ color: "#2e2e2e70", marginRight: "12px" }}
                 />
-                {currentTab}
+                {weatherData.city}
               </div>
             </div>
             <div className="second-row">
               <div className="data-item">
                 <h3>이산화황(SO2)</h3>
-                <p>{weatherData[currentTab].so2}</p>
+                <p>{weatherData.airQuality.so2}</p>
               </div>
               <div className="data-item">
                 <h3>일산화탄소(CO)</h3>
-                <p>{weatherData[currentTab].co}</p>
+                <p>{weatherData.airQuality.co}</p>
               </div>
               <div className="data-item">
                 <h3>오존(O3)</h3>
-                <p>{weatherData[currentTab].o3}</p>
+                <p>{weatherData.airQuality.o3}</p>
               </div>
             </div>
             <div className="third-row">
               <div className="data-item">
                 <h3>이산화질소(NO2)</h3>
-                <p>{weatherData[currentTab].no2}</p>
+                <p>{weatherData.airQuality.no2}</p>
               </div>
               <div className="data-item">
                 <h3>미세먼지(PM10)</h3>
-                <p>{weatherData[currentTab].pm10}</p>
+                <p>{weatherData.airQuality.pm10}</p>
               </div>
               <div className="data-item">
                 <h3>초미세먼지(PM2.5)</h3>
-                <p>{weatherData[currentTab].pm25}</p>
+                <p>{weatherData.airQuality.pm25}</p>
               </div>
             </div>
           </>
@@ -128,6 +139,4 @@ const WeatherLanding = () => {
       </div>
     </div>
   );
-};
-
-export default WeatherLanding;
+}

@@ -8,7 +8,7 @@ import SearchCityPage from "./pages/SearchCityPage";
 import MyPage from "./pages/MyPage";
 import WeatherPage from "./pages/WeatherPage";
 import Cursor from "./components/Cursor";
-import BubbleCursor from "./components/BubbleCursor";
+//import BubbleCursor from "./components/BubbleCursor";
 import GoogleCallback from "./components/Landing/GoogleCallback";
 import LocationPage from "./components/Location/LocationPage";
 import LocationDetail from "./components/Location/LocationDetail";
@@ -23,7 +23,7 @@ function App() {
   return (
     <Router>
       <Cursor />
-      <BubbleCursor />
+      {/*<BubbleCursor />*/}
       <Layout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
         <Routes>
           <Route path="/" element={<MainPage />} />

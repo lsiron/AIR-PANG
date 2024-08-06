@@ -30,7 +30,7 @@
 .title {
   width: 400px;
   height: 60px;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   border-radius: 50px;
   outline: none;
   text-align: center;
@@ -39,9 +39,9 @@
 
 .description {
   resize: none;
-  width: 360px;
+  width: 400px;
   height: 164px;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   border-radius: 20px;
   outline: none;
   padding: 20px;
@@ -51,7 +51,7 @@
 .inputs {
   width: 400px;
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
 }
 
 .date {
@@ -60,7 +60,7 @@
   border-radius: 50px;
   outline: none;
   text-align: center;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
 }
 
 .add {
@@ -70,7 +70,7 @@
   outline: none;
   text-align: center;
   background-color: white;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
 }
 
 .buttons {
@@ -86,7 +86,7 @@
   outline: none;
   text-align: center;
 
-  background-color: #69747B;
+  background-color: #69747b;
   color: white;
   border: 0;
   font-size: 20px;
@@ -99,19 +99,19 @@
   outline: none;
   text-align: center;
 
-  background-color: #004AAD;
+  background-color: #004aad;
   color: white;
   border: 0;
   font-size: 20px;
 }
 
-input[type='date']::before {
+input[type="date"]::before {
   content: attr(data-placeholder);
   width: 100%;
 }
 
-input[type='date']:focus::before,
-input[type='date']:valid::before {
+input[type="date"]:focus::before,
+input[type="date"]:valid::before {
   display: none;
 }
 
@@ -136,8 +136,8 @@ input[type='date']:valid::before {
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 260px; /* 너비 설정 */
-  height: 360px;
+  width: 280px; /* 너비 설정 */
+  height: 400px;
 }
 
 .modal-content h2 {
@@ -153,10 +153,10 @@ input[type='date']:valid::before {
 }
 
 .modal-content input {
-  width: 90%;
+  width: 100%;
   padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   border-radius: 20px;
   text-align: center;
 }
@@ -175,10 +175,13 @@ input[type='date']:valid::before {
 .modal-content button:last-child {
   position: absolute;
   top: 10px;
-  right: 0px;
+  right: 10px;
 
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+  font-size: 20px;
+  margin: 0;
+  padding: 0;
   background-color: white;
   color: black;
 }
