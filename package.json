@@ -1,0 +1,15 @@
+{
+  "name": "airpang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://kdt-gitlab.elice.io/ai_track/class_11/data_project/team02/airpang/airpang.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
