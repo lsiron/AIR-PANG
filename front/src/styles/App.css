@@ -1,1 +1,6 @@
-/* 스타일 파일 (CSS, SASS, SCSS 등) */
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
